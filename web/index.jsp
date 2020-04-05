@@ -1,4 +1,4 @@
-<%--
+<%@ page import="edu.uci.cs122b.*" %><%--
   Created by IntelliJ IDEA.
   User: Kevin
   Date: 4/3/20
@@ -11,6 +11,10 @@
     <title>$TITLE$</title>
   </head>
   <body>
-  $END$
+    <form action="movies" method="get">
+      Query: <input type="text" name="query">
+      <br>
+      <input type="submit" value="Show Movie List">
+    </form>
   </body>
 </html>
