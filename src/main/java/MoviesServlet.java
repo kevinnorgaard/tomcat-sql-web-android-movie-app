@@ -19,7 +19,9 @@ public class MoviesServlet extends HttpServlet {
 
             // create and execute a SQL statement
             Statement select = connection.createStatement();
-            String query = "SELECT * FROM movies";
+            String query = "WITH TOPTEN AS (SELECT m.id, m.title, m.year, m.director, r.ratings FROM movies m, ratings r WHERE r.movieId = m.id ORDER BY r.ratings DESC LIMIT 20), " +
+                    "MOVIESGENRES AS (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres FROM TOPTEN mr, genres_in_movies gm, genres g WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) " +
+                    "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars FROM MOVIESGENRES mg, stars_in_movies sm, stars s WHERE mg.id = sm.movieId AND sm.starId = s.id GROUP BY mg.id, mg.ratings ORDER BY mg.ratings DESC";
 
             ResultSet result = select.executeQuery(query);
 
@@ -37,21 +39,28 @@ public class MoviesServlet extends HttpServlet {
 
             // print table headers
             out.println("<tr>");
-            for (int i = 1; i <= metadata.getColumnCount(); i++) {
-                out.println("<th>" + metadata.getColumnName(i) + "</th>");
-            }
+            out.println("<th>" + "title" + "</th>");
+            out.println("<th>" + "year" + "</th>");
+            out.println("<th>" + "director" + "</th>");
+            out.println("<th>" + "ratings" + "</th>");
+            out.println("<th>" + "genres" + "</th>");
+            out.println("<th>" + "stars" + "</th>");
             out.println("<tr/>");
 
             // print table content
             while (result.next()) {
                 out.println("<tr>");
-                out.println("<form action=\"movie\" method=\"get\">");
+                out.println("<td><form action=\"movie\" method=\"get\">");
                 out.println("<input type=\"hidden\" name=\"id\" value=\"" + result.getString("id") + "\">");
-                for (int i = 1; i <= metadata.getColumnCount(); i++) {
-                    out.println("<td>" + result.getString(metadata.getColumnName(i)) + "</td>");
-                }
-                out.println("<td><input type=\"submit\" value=\"Show Movie\"></td>");
-                out.println("</form>");
+                out.println("<input type=\"submit\" value=\"" + result.getString("title") + "\">");
+                out.println("</form></td>");
+                out.println("<td>" + result.getString("year") + "</td>");
+                out.println("<td>" + result.getString("director") + "</td>");
+                out.println("<td>" + result.getString("ratings") + "</td>");
+                String genres = result.getString("genres");
+                printGenres(out, genres);
+                String stars = result.getString("stars");
+                printStars(out, stars);
                 out.println("</tr>");
             }
 
@@ -74,5 +83,35 @@ public class MoviesServlet extends HttpServlet {
 
         out.println("</html>");
         out.close();
+    }
+
+    protected void printGenres(PrintWriter out, String genres) {
+        out.println("<td>");
+        int count = 0;
+        for (String genre : genres.split(";")) {
+            if (count >= 3) {
+                break;
+            }
+            out.println(genre + "<br>");
+            count++;
+        }
+        out.println("</td>");
+    }
+
+    protected void printStars(PrintWriter out, String stars) {
+        out.println("<td>");
+        int count = 0;
+        for (String star : stars.split(";")) {
+            if (count >= 3) {
+                break;
+            }
+            String[] nameAndId = star.split(",");
+            out.println("<form action=\"star\" method=\"get\">");
+            out.println("<input type=\"hidden\" name=\"id\" value=\"" + nameAndId[1] + "\">");
+            out.println("<input type=\"submit\" value=\"" + nameAndId[0] + "\">");
+            out.println("</form>");
+            count++;
+        }
+        out.println("</td>");
     }
 }
