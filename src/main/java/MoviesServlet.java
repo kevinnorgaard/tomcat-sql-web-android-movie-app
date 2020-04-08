@@ -54,9 +54,9 @@ public class MoviesServlet extends HttpServlet {
                 out.println("<input type=\"hidden\" name=\"id\" value=\"" + result.getString("id") + "\">");
                 out.println("<input type=\"submit\" value=\"" + result.getString("title") + "\">");
                 out.println("</form></td>");
-                out.println("<td>" + result.getString("year") + "</td>");
+                out.println("<td>" + result.getInt("year") + "</td>");
                 out.println("<td>" + result.getString("director") + "</td>");
-                out.println("<td>" + result.getString("ratings") + "</td>");
+                out.println("<td>" + result.getFloat("ratings") + "</td>");
                 String genres = result.getString("genres");
                 printGenres(out, genres);
                 String stars = result.getString("stars");
