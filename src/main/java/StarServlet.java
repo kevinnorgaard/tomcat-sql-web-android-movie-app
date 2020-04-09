@@ -54,7 +54,10 @@ public class StarServlet extends HttpServlet {
             }
 
             out.println("</table>");
-
+            // back button to movie list
+            out.println("<form action=\"movies\" method=\"get\" align=\"center\">");
+            out.println("<input type=\"submit\" value=\"Back to movie list.\">");
+            out.println("</form>");
             out.println("</body>");
 
             result.close();
