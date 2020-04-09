@@ -31,9 +31,9 @@ public class StarServlet extends HttpServlet {
                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">" +
                     "</head>");
             out.println("<body>");
-            out.println("<h1>Star Details</h1>");
+            out.println("<h1 align=\"center\"> Star Details</h1>");
 
-            out.println("<table>");
+            out.println("<table align=\"center\">");
 
             // print table headers
             out.println("<tr>");
@@ -54,6 +54,7 @@ public class StarServlet extends HttpServlet {
             }
 
             out.println("</table>");
+
             out.println("</body>");
 
             result.close();

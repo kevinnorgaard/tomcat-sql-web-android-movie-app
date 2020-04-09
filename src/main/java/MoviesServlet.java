@@ -46,18 +46,18 @@ public class MoviesServlet extends HttpServlet {
                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">" +
                     "</head>");
             out.println("<body>");
-            out.println("<h1>Movies</h1>");
+            out.println("<h1 align=\"center\">Movies</h1>");
 
-            out.println("<table>");
+            out.println("<table align=\"center\">");
 
             // print table headers
             out.println("<tr>");
-            out.println("<th>" + "title" + "</th>");
-            out.println("<th>" + "year" + "</th>");
-            out.println("<th>" + "director" + "</th>");
-            out.println("<th>" + "ratings" + "</th>");
-            out.println("<th>" + "genres" + "</th>");
-            out.println("<th>" + "stars" + "</th>");
+            out.println("<th>" + "Title" + "</th>");
+            out.println("<th>" + "Tear" + "</th>");
+            out.println("<th>" + "Director" + "</th>");
+            out.println("<th>" + "Ratings" + "</th>");
+            out.println("<th>" + "Genres" + "</th>");
+            out.println("<th>" + "Stars" + "</th>");
             out.println("<tr/>");
 
             // print table content
