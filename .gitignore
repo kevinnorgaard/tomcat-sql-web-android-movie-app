@@ -36,6 +36,9 @@ local.properties
 # sbteclipse plugin
 .target
 
+#idea folder
+.idea
+
 # Tern plugin
 .tern-project
 
