@@ -37,7 +37,7 @@ local.properties
 .target
 
 #idea folder
-.idea
+.idea/
 
 # Tern plugin
 .tern-project
