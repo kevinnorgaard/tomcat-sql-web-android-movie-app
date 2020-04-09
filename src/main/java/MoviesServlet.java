@@ -43,30 +43,29 @@ public class MoviesServlet extends HttpServlet {
             out.println("<html>");
             out.println("<head>" +
                     "<title>Fabflix</title>" +
-                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">" +
+                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">" +
                     "</head>");
             out.println("<body>");
-            out.println("<h1 align=\"center\">Movies</h1>");
+            out.println("<h1>Movies</h1>");
 
-            out.println("<table align=\"center\">");
+            out.println("<table>");
 
             // print table headers
             out.println("<tr>");
             out.println("<th>" + "Title" + "</th>");
-            out.println("<th>" + "Tear" + "</th>");
+            out.println("<th>" + "Year" + "</th>");
             out.println("<th>" + "Director" + "</th>");
-            out.println("<th>" + "Ratings" + "</th>");
+            out.println("<th>" + "Rating" + "</th>");
             out.println("<th>" + "Genres" + "</th>");
             out.println("<th>" + "Stars" + "</th>");
             out.println("<tr/>");
 
             // print table content
             while (result.next()) {
+                String id = result.getString("id");
+                String title = result.getString("title");
                 out.println("<tr>");
-                out.println("<td><form action=\"movie\" method=\"get\">");
-                out.println("<input type=\"hidden\" name=\"id\" value=\"" + result.getString("id") + "\">");
-                out.println("<input type=\"submit\" value=\"" + result.getString("title") + "\">");
-                out.println("</form></td>");
+                out.println("<td><a href=\"movie?id=" + id + "\">" + title + "</a></td>");
                 out.println("<td>" + result.getInt("year") + "</td>");
                 out.println("<td>" + result.getString("director") + "</td>");
                 out.println("<td>" + result.getFloat("ratings") + "</td>");
@@ -119,10 +118,9 @@ public class MoviesServlet extends HttpServlet {
                 break;
             }
             String[] nameAndId = star.split(",");
-            out.println("<form action=\"star\" method=\"get\">");
-            out.println("<input type=\"hidden\" name=\"id\" value=\"" + nameAndId[1] + "\">");
-            out.println("<input type=\"submit\" value=\"" + nameAndId[0] + "\">");
-            out.println("</form>");
+            String starId = nameAndId[1];
+            String starName = nameAndId[0];
+            out.println("<a href=\"star?id=" + starId + "\">" + starName + "</a><br>");
             count++;
         }
         out.println("</td>");

@@ -1,0 +1,36 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+    font-weight: 400;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    background-color: rgba(0, 139, 139, 1);
+    color: white;
+}
+
+table, th, td {
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+th, td {
+    padding: 10px;
+}
+
+h {
+    color: navy;
+}
+
+a {
+    color: rgba(0, 139, 139, 1);
+}
+
+.back-btn {
+}
+

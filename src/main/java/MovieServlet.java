@@ -41,12 +41,12 @@ public class MovieServlet extends HttpServlet {
             out.println("<html>");
             out.println("<head>" +
                     "<title>Fabflix</title>" +
-                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">" +
+                    "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">" +
                     "</head>");
-            out.println("<body> <link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">");
-            out.println("<h1 align=\"center\">Movie Details</h1>");
+            out.println("<body> <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
+            out.println("<h1>Movie Details</h1>");
 
-            out.println("<table align=\"center\"> <link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">");
+            out.println("<table> <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
 
             // print table headers
             out.println("<tr>");
@@ -74,9 +74,7 @@ public class MovieServlet extends HttpServlet {
 
             out.println("</table>");
             // back button to movie list
-            out.println("<form action=\"movies\" method=\"get\" align=\"center\">");
-            out.println("<input type=\"submit\" value=\"Back to movie list.\">");
-            out.println("</form>");
+            out.println("<a class=\"back-btn\" href=\"movies\">Back to movies</a>");
             out.println("</body>");
 
             result.close();
@@ -109,10 +107,9 @@ public class MovieServlet extends HttpServlet {
         out.println("<td>");
         for (String star : stars.split(";")) {
             String[] nameAndId = star.split(",");
-            out.println("<form action=\"star\" method=\"get\">");
-            out.println("<input type=\"hidden\" name=\"id\" value=\"" + nameAndId[1] + "\">");
-            out.println("<input type=\"submit\" value=\"" + nameAndId[0] + "\">");
-            out.println("</form>");
+            String starId = nameAndId[1];
+            String starName = nameAndId[0];
+            out.println("<a href=\"star?id=" + starId + "\">" + starName + "</a><br>");
         }
         out.println("</td>");
     }
