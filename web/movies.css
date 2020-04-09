@@ -1,11 +1,21 @@
+body{
+    background-color: darkcyan;
+}
 table {
     border-collapse: collapse;
 }
 
 table, th, td {
-    border: 1px solid black;
+    border: 1px solid blue;
+    color: black;
+    background-color: aquamarine;
 }
 
 th, td {
     padding: 10px;
 }
+
+h{
+    color: navy;
+}
+

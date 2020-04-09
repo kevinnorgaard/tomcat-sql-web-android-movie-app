@@ -43,10 +43,10 @@ public class MovieServlet extends HttpServlet {
                     "<title>Fabflix</title>" +
                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">" +
                     "</head>");
-            out.println("<body>");
+            out.println("<body> <link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">");
             out.println("<h1 align=\"center\">Movie Details</h1>");
 
-            out.println("<table align=\"center\">");
+            out.println("<table align=\"center\"> <link rel=\"stylesheet\" type=\"text/css\" href=\"movies.css\">");
 
             // print table headers
             out.println("<tr>");
