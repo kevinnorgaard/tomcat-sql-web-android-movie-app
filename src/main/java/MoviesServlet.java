@@ -19,9 +19,22 @@ public class MoviesServlet extends HttpServlet {
 
             // create and execute a SQL statement
             Statement select = connection.createStatement();
-            String query = "WITH TOPTEN AS (SELECT m.id, m.title, m.year, m.director, r.ratings FROM movies m, ratings r WHERE r.movieId = m.id ORDER BY r.ratings DESC LIMIT 20), " +
-                    "MOVIESGENRES AS (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres FROM TOPTEN mr, genres_in_movies gm, genres g WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) " +
-                    "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars FROM MOVIESGENRES mg, stars_in_movies sm, stars s WHERE mg.id = sm.movieId AND sm.starId = s.id GROUP BY mg.id, mg.ratings ORDER BY mg.ratings DESC";
+            String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars \r\n" +
+                    "FROM (\r\n" +
+                    "	SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres \r\n" +
+                    "	FROM (\r\n" +
+                    "		SELECT m.id, m.title, m.year, m.director, r.ratings \r\n" +
+                    "		FROM movies m, ratings r \r\n" +
+                    "		WHERE r.movieId = m.id \r\n" +
+                    "		ORDER BY r.ratings \r\n" +
+                    "		DESC LIMIT 20) \r\n" +
+                    "	mr, genres_in_movies gm, genres g \r\n" +
+                    "	WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) \r\n" +
+                    "mg, stars_in_movies sm, stars s \r\n" +
+                    "WHERE mg.id = sm.movieId \r\n" +
+                    "AND sm.starId = s.id \r\n" +
+                    "GROUP BY mg.id, mg.ratings \r\n" +
+                    "ORDER BY mg.ratings DESC";
 
             ResultSet result = select.executeQuery(query);
 
