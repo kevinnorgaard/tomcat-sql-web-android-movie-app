@@ -1,13 +1,22 @@
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
-@WebServlet("/star")
+@WebServlet(name = "StarServlet", urlPatterns = "/api/star")
 public class StarServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        res.setContentType("text/html");
+    private static final long serialVersionUID = 3L;
+
+    @Resource(name = "jdbc/moviedb")
+    private DataSource dataSource;
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("application/json");
+        
         PrintWriter out = res.getWriter();
 
         try {

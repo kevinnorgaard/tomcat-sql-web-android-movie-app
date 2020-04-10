@@ -1,13 +1,22 @@
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
-@WebServlet("/movie")
-public class MovieServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        res.setContentType("text/html");
+@WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
+public class MoviesServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @Resource(name = "jdbc/moviedb")
+    private DataSource dataSource;
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("application/json");
+
         PrintWriter out = res.getWriter();
 
         try {
@@ -19,19 +28,21 @@ public class MovieServlet extends HttpServlet {
 
             // create and execute a SQL statement
             Statement select = connection.createStatement();
-            String query = "SELECT mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
-                    "FROM (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
-                    "FROM (SELECT m.id, m.title, m.year, m.director, r.ratings " +
-                    "FROM movies m, ratings r " +
-                    "WHERE r.movieId = m.id AND id = '" + req.getParameter("id") +
-                    "' ORDER BY r.ratings " +
-                    "DESC LIMIT 20) as mr, genres_in_movies gm, genres g " +
-                    "WHERE mr.id = gm.movieId " +
-                    "AND gm.genreId = g.id " +
-                    "GROUP BY mr.id, mr.ratings) as mg, stars_in_movies sm, stars s " +
-                    "WHERE mg.id = sm.movieId " +
-                    "AND sm.starId = s.id " +
-                    "GROUP BY mg.id, mg.ratings " +
+            String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars \r\n" +
+                    "FROM (\r\n" +
+                    "	SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres \r\n" +
+                    "	FROM (\r\n" +
+                    "		SELECT m.id, m.title, m.year, m.director, r.ratings \r\n" +
+                    "		FROM movies m, ratings r \r\n" +
+                    "		WHERE r.movieId = m.id \r\n" +
+                    "		ORDER BY r.ratings \r\n" +
+                    "		DESC LIMIT 20) \r\n" +
+                    "	mr, genres_in_movies gm, genres g \r\n" +
+                    "	WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) \r\n" +
+                    "mg, stars_in_movies sm, stars s \r\n" +
+                    "WHERE mg.id = sm.movieId \r\n" +
+                    "AND sm.starId = s.id \r\n" +
+                    "GROUP BY mg.id, mg.ratings \r\n" +
                     "ORDER BY mg.ratings DESC";
 
             ResultSet result = select.executeQuery(query);
@@ -43,25 +54,27 @@ public class MovieServlet extends HttpServlet {
                     "<title>Fabflix</title>" +
                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">" +
                     "</head>");
-            out.println("<body> <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
-            out.println("<h1>Movie Details</h1>");
+            out.println("<body>");
+            out.println("<h1>Movies</h1>");
 
-            out.println("<table> <link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
+            out.println("<table>");
 
             // print table headers
             out.println("<tr>");
             out.println("<th>" + "Title" + "</th>");
             out.println("<th>" + "Year" + "</th>");
             out.println("<th>" + "Director" + "</th>");
-            out.println("<th>" + "Ratings" + "</th>");
+            out.println("<th>" + "Rating" + "</th>");
             out.println("<th>" + "Genres" + "</th>");
             out.println("<th>" + "Stars" + "</th>");
             out.println("<tr/>");
 
             // print table content
             while (result.next()) {
+                String id = result.getString("id");
+                String title = result.getString("title");
                 out.println("<tr>");
-                out.println("<td>" + result.getString("title") + "</td>");
+                out.println("<td><a href=\"movie?id=" + id + "\">" + title + "</a></td>");
                 out.println("<td>" + result.getInt("year") + "</td>");
                 out.println("<td>" + result.getString("director") + "</td>");
                 out.println("<td>" + result.getFloat("ratings") + "</td>");
@@ -73,8 +86,6 @@ public class MovieServlet extends HttpServlet {
             }
 
             out.println("</table>");
-            // back button to movie list
-            out.println("<a class=\"back-btn\" href=\"movies\">Back to movies</a>");
             out.println("</body>");
 
             result.close();
@@ -97,19 +108,29 @@ public class MovieServlet extends HttpServlet {
 
     protected void printGenres(PrintWriter out, String genres) {
         out.println("<td>");
+        int count = 0;
         for (String genre : genres.split(";")) {
+            if (count >= 3) {
+                break;
+            }
             out.println(genre + "<br>");
+            count++;
         }
         out.println("</td>");
     }
 
     protected void printStars(PrintWriter out, String stars) {
         out.println("<td>");
+        int count = 0;
         for (String star : stars.split(";")) {
+            if (count >= 3) {
+                break;
+            }
             String[] nameAndId = star.split(",");
             String starId = nameAndId[1];
             String starName = nameAndId[0];
             out.println("<a href=\"star?id=" + starId + "\">" + starName + "</a><br>");
+            count++;
         }
         out.println("</td>");
     }
