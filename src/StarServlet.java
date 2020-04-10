@@ -16,15 +16,12 @@ public class StarServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("application/json");
-        
+
         PrintWriter out = res.getWriter();
 
         try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-
             // connect to the database
-            Connection connection = DriverManager.getConnection("jdbc:" + Parameters.dbtype + ":///" + Parameters.dbname + "?autoReconnect=true&useSSL=false",
-                    Parameters.username, Parameters.password);
+            Connection connection = dataSource.getConnection();
 
             // create and execute a SQL statement
             Statement select = connection.createStatement();
