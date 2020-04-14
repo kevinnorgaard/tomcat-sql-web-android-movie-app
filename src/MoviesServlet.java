@@ -66,12 +66,13 @@ public class MoviesServlet extends HttpServlet {
             out.println("<th>" + "Stars" + "</th>");
             out.println("<tr/>");
 
+            int counter = 1;
             // print table content
             while (result.next()) {
                 String id = result.getString("id");
                 String title = result.getString("title");
                 out.println("<tr>");
-                out.println("<td><a href=\"movie?id=" + id + "\">" + title + "</a></td>");
+                out.println("<td><a href=\"movie?id=" + id + "\">" + counter++ + ". " + title + "</a></td>");
                 out.println("<td>" + result.getInt("year") + "</td>");
                 out.println("<td>" + result.getString("director") + "</td>");
                 out.println("<td>" + result.getFloat("ratings") + "</td>");
