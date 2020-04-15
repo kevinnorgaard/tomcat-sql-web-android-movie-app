@@ -13,17 +13,24 @@
     <title>Single Movie</title>
 </head>
 <body>
-<table id=star_info class="table table-striped">
-    <thead>
-    <tr>
-        <th>Movies</th>
-    </tr>
-    </thead>
-
-    <!-- Table body is left empty here, will be populated with the data retrieved with single-star.js -->
-    <!-- single-star.js will find this html element by it's id "movie_table_body" -->
-    <tbody id=star_table_body></tbody>
-</table>
+<div id=wrapper>
+    <h1>Star Details</h1>
+    <div class="container">
+        <div class="row">
+            <div id=star_info class="col col-md-6"></div>
+            <div class="col col-md-6">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Movies</th>
+                    </tr>
+                    </thead>
+                    <tbody id=star_table_body></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>

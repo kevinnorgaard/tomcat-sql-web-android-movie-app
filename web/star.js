@@ -22,21 +22,17 @@ function handleResult(resultData) {
 
     let starInfoElement = jQuery("#star_info");
 
-    starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
-        "<p>Birth Year: " + resultData[0]["star_birthyear"] + "</p>");
+    starInfoElement.append("<label>Name</label><p class=detail>" + resultData[0]["star_name"] + "</p>" +
+        "<label>Birth Year</label><p class=detail>" + resultData[0]["star_birthyear"] + "</p>");
 
     let movieTableBodyElement = jQuery("#star_table_body");
 
     // Concatenate the html tags with resultData jsonObject to create table rows
     for (let i = 0; i < resultData.length; i++) {
         let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML += "<td>";
         for (let movie of resultData[i]["star_movies"]) {
-            rowHTML += '<a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a><br>";
+            rowHTML += '<tr><td><a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a></td></tr>";
         }
-        rowHTML += "</td>";
-        rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
         movieTableBodyElement.append(rowHTML);

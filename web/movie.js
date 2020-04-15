@@ -18,40 +18,34 @@ function handleResult(resultData) {
 
     console.log("handleResult: populating star info from resultData");
 
-    let starInfoElement = jQuery("#movie_info");
+    let movieInfoElement = jQuery("#movie_info");
 
-    starInfoElement.append("<p>Movie Name: " + resultData[0]["movie_title"] + "</p>" +
-        "<p>Year: " + resultData[0]["movie_year"] + "</p>");
+    movieInfoElement.append(
+        "<label>Movie Title</label><p class=detail>" + resultData[0]["movie_title"] + "</p>" +
+        "<label>Release Year</label><p class=detail>" + resultData[0]["movie_year"] + "</p>" +
+        "<label>Director</label><p class=detail>" + resultData[0]["movie_director"] + "</p>" +
+        "<label>Ratings</label><p class=detail>" + resultData[0]["movie_ratings"] + "</p>");
 
     // console.log("handleResult: populating movie table from resultData");
 
-    let movieTableBodyElement = jQuery("#movie_table_body");
+    let genresTableBodyElement = jQuery("#genres_table_body");
+    let starsTableBodyElement = jQuery("#stars_table_body");
 
     // Concatenate the html tags with resultData jsonObject to create table rows
     for (let i = 0; i < resultData.length; i++) {
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML += "<td>" + resultData[i]["movie_title"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_year"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_director"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_ratings"] + "</td>";
+        let genresHTML = "";
+        let starsHTML = "";
 
-        rowHTML += "<td>";
         for (let genre of resultData[i]["movie_genres"]) {
-            rowHTML += genre["genre"] + "<br>";
+            genresHTML += "<tr><td>" + genre["genre"] + "</td></tr>";
         }
-        rowHTML += "</td>";
 
-        rowHTML += "<td>";
         for (let star of resultData[i]["movie_stars"]) {
-            rowHTML += '<a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a><br>";
+            starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
         }
-        rowHTML += "</td>";
 
-        rowHTML += "</tr>";
-
-        // Append the row created to the table body, which will refresh the page
-        movieTableBodyElement.append(rowHTML);
+        genresTableBodyElement.append(genresHTML);
+        starsTableBodyElement.append(starsHTML);
     }
 }
 
