@@ -15,11 +15,6 @@ function getParameterByName(target) {
 }
 
 function handleResult(resultData) {
-
-    console.log("handleResult: populating star info from resultData");
-
-    console.log(resultData);
-
     let starInfoElement = jQuery("#star_info");
 
     starInfoElement.append("<label>Name</label><p class=detail>" + resultData[0]["star_name"] + "</p>" +
@@ -27,16 +22,13 @@ function handleResult(resultData) {
 
     let movieTableBodyElement = jQuery("#star_table_body");
 
-    // Concatenate the html tags with resultData jsonObject to create table rows
-    for (let i = 0; i < resultData.length; i++) {
-        let rowHTML = "";
-        for (let movie of resultData[i]["star_movies"]) {
-            rowHTML += '<tr><td><a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a></td></tr>";
-        }
-
-        // Append the row created to the table body, which will refresh the page
-        movieTableBodyElement.append(rowHTML);
+    let rowHTML = "";
+    for (let movie of resultData[i]["star_movies"]) {
+        rowHTML += '<tr><td><a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a></td></tr>";
     }
+
+    // Append the row created to the table body, which will refresh the page
+    movieTableBodyElement.append(rowHTML);
 }
 
 let starId = getParameterByName('id');

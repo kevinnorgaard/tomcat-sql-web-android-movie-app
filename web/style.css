@@ -21,6 +21,7 @@ h1 {
 label {
     font-size: 16px;
     color: rgba(0, 139, 139, 1);
+    text-transform: uppercase;
 }
 
 .detail {
