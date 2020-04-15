@@ -29,11 +29,11 @@ function handleResult(resultData) {
     let genresHTML = "";
     let starsHTML = "";
 
-    for (let genre of resultData[i]["movie_genres"]) {
+    for (let genre of resultData[0]["movie_genres"]) {
         genresHTML += "<tr><td>" + genre["genre"] + "</td></tr>";
     }
 
-    for (let star of resultData[i]["movie_stars"]) {
+    for (let star of resultData[0]["movie_stars"]) {
         starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
     }
 

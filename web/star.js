@@ -23,7 +23,7 @@ function handleResult(resultData) {
     let movieTableBodyElement = jQuery("#star_table_body");
 
     let rowHTML = "";
-    for (let movie of resultData[i]["star_movies"]) {
+    for (let movie of resultData[0]["star_movies"]) {
         rowHTML += '<tr><td><a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a></td></tr>";
     }
 
