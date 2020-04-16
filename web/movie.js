@@ -1,3 +1,5 @@
+let cartForm = $("#add-to-cart-form");
+
 function getParameterByName(target) {
     // Get request URL
     let url = window.location.href;
@@ -15,6 +17,8 @@ function getParameterByName(target) {
 }
 
 function handleResult(resultData) {
+    console.log("Loading movie data into tables");
+    console.log(resultData);
     let movieInfoElement = jQuery("#movie_info");
 
     movieInfoElement.append(
@@ -37,16 +41,38 @@ function handleResult(resultData) {
         starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
     }
 
+    $("#id").val(resultData[0]["movie_id"]);
+
     genresTableBodyElement.append(genresHTML);
     starsTableBodyElement.append(starsHTML);
+}
+
+function handleCartResult(resultData) {
+    console.log("handling cart response");
+    console.log(resultData);
+}
+
+function submitLoginForm(formSubmitEvent) {
+    console.log("submitted");
+    console.log(cartForm.serialize());
+    formSubmitEvent.preventDefault();
+    $.ajax(
+        "api/cart", {
+            method: "POST",
+            data: cartForm.serialize(),
+            success: handleCartResult
+        }
+    );
 }
 
 let movieId = getParameterByName('id');
 
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
-    dataType: "json",  // Setting return data type
-    method: "GET",// Setting request method
-    url: "api/movie?id=" + movieId, // Setting request url, which is mapped by StarsServlet in Stars.java
-    success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
+    dataType: "json",
+    method: "GET",
+    url: "api/movie?id=" + movieId,
+    success: handleResult
 });
+
+cartForm.submit(submitLoginForm);

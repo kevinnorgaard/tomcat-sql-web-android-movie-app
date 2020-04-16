@@ -28,6 +28,8 @@ function handleMoviesResult(resultData) {
         }
         rowHTML += "</td>";
 
+        rowHTML += "<td><button class=\"colored-btn\">Add to Cart</button></td>";
+
         rowHTML += "</tr>";
 
         moviesTableBodyElement.append(rowHTML);

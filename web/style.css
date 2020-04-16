@@ -20,6 +20,7 @@
 
 .container {
     padding: 0 !important;
+    margin-bottom: 20px;
 }
 
 h1 {
@@ -49,12 +50,13 @@ input {
     min-height: 30px;
     padding: 5px 10px;
     text-align: center;
+    outline: none;
 }
 
 .white-btn {
     cursor: pointer;
     background-color: white;
-    color: black;
+    color: black !important;
 }
 
 .colored-btn {

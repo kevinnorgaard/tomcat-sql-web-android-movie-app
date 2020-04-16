@@ -26,7 +26,7 @@ public class MovieServlet extends HttpServlet {
             Connection connection = dataSource.getConnection();
 
             Statement select = connection.createStatement();
-            String query = "SELECT mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
+            String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
                     "FROM (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
                     "FROM (SELECT m.id, m.title, m.year, m.director, r.ratings " +
                     "FROM movies m, ratings r " +
@@ -46,6 +46,7 @@ public class MovieServlet extends HttpServlet {
             JsonArray jsonArray = new JsonArray();
 
             while (result.next()) {
+                String movie_id = result.getString("id");
                 String movie_title = result.getString("title");
                 String movie_year = result.getString("year");
                 String movie_director = result.getString("director");
@@ -54,6 +55,7 @@ public class MovieServlet extends HttpServlet {
                 String movie_stars = result.getString("stars");
 
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("movie_id", movie_id);
                 jsonObject.addProperty("movie_title", movie_title);
                 jsonObject.addProperty("movie_year", movie_year);
                 jsonObject.addProperty("movie_director", movie_director);
