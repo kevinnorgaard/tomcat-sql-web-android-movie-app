@@ -19,75 +19,84 @@ public class MoviesServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws
             ServletException, IOException {
-        res.setContentType("application/json");
         PrintWriter out = res.getWriter();
+        res.setContentType("application/json");
 
-        try {
-            // connect to the database
-            Connection connection = dataSource.getConnection();
+        HttpSession session = req.getSession();
+        Object loggedIn = session.getAttribute("loggedIn");
 
-            // create and execute a SQL statement
-            Statement select = connection.createStatement();
-            String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars \r\n" +
-                    "FROM (\r\n" +
-                    "	SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres \r\n" +
-                    "	FROM (\r\n" +
-                    "		SELECT m.id, m.title, m.year, m.director, r.ratings \r\n" +
-                    "		FROM movies m, ratings r \r\n" +
-                    "		WHERE r.movieId = m.id \r\n" +
-                    "		ORDER BY r.ratings \r\n" +
-                    "		DESC LIMIT 20) \r\n" +
-                    "	mr, genres_in_movies gm, genres g \r\n" +
-                    "	WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) \r\n" +
-                    "mg, stars_in_movies sm, stars s \r\n" +
-                    "WHERE mg.id = sm.movieId \r\n" +
-                    "AND sm.starId = s.id \r\n" +
-                    "GROUP BY mg.id, mg.ratings \r\n" +
-                    "ORDER BY mg.ratings DESC";
+        if (loggedIn != null && (boolean)loggedIn) {
 
-            ResultSet result = select.executeQuery(query);
+            try {
+                // connect to the database
+                Connection connection = dataSource.getConnection();
 
-            JsonArray jsonArray = new JsonArray();
+                // create and execute a SQL statement
+                Statement select = connection.createStatement();
+                String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars \r\n" +
+                        "FROM (\r\n" +
+                        "	SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres \r\n" +
+                        "	FROM (\r\n" +
+                        "		SELECT m.id, m.title, m.year, m.director, r.ratings \r\n" +
+                        "		FROM movies m, ratings r \r\n" +
+                        "		WHERE r.movieId = m.id \r\n" +
+                        "		ORDER BY r.ratings \r\n" +
+                        "		DESC LIMIT 20) \r\n" +
+                        "	mr, genres_in_movies gm, genres g \r\n" +
+                        "	WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) \r\n" +
+                        "mg, stars_in_movies sm, stars s \r\n" +
+                        "WHERE mg.id = sm.movieId \r\n" +
+                        "AND sm.starId = s.id \r\n" +
+                        "GROUP BY mg.id, mg.ratings \r\n" +
+                        "ORDER BY mg.ratings DESC";
 
-            while (result.next()) {
-                String movie_id = result.getString("id");
-                String movie_title = result.getString("title");
-                String movie_year = result.getString("year");
-                String movie_director = result.getString("director");
-                String movie_ratings = result.getString("ratings");
-                String movie_genres = result.getString("genres");
-                String movie_stars = result.getString("stars");
+                ResultSet result = select.executeQuery(query);
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("movie_id", movie_id);
-                jsonObject.addProperty("movie_title", movie_title);
-                jsonObject.addProperty("movie_year", movie_year);
-                jsonObject.addProperty("movie_director", movie_director);
-                jsonObject.addProperty("movie_ratings", movie_ratings);
-                JsonArray genresArray = genresToArray(movie_genres);
-                jsonObject.add("movie_genres", genresArray);
-                JsonArray starsArray = starsToArray(movie_stars);
-                jsonObject.add("movie_stars", starsArray);
+                JsonArray jsonArray = new JsonArray();
 
-                jsonArray.add(jsonObject);
+                while (result.next()) {
+                    String movie_id = result.getString("id");
+                    String movie_title = result.getString("title");
+                    String movie_year = result.getString("year");
+                    String movie_director = result.getString("director");
+                    String movie_ratings = result.getString("ratings");
+                    String movie_genres = result.getString("genres");
+                    String movie_stars = result.getString("stars");
+
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("movie_id", movie_id);
+                    jsonObject.addProperty("movie_title", movie_title);
+                    jsonObject.addProperty("movie_year", movie_year);
+                    jsonObject.addProperty("movie_director", movie_director);
+                    jsonObject.addProperty("movie_ratings", movie_ratings);
+                    JsonArray genresArray = genresToArray(movie_genres);
+                    jsonObject.add("movie_genres", genresArray);
+                    JsonArray starsArray = starsToArray(movie_stars);
+                    jsonObject.add("movie_stars", starsArray);
+
+                    jsonArray.add(jsonObject);
+                }
+
+                out.write(jsonArray.toString());
+                res.setStatus(200);
+
+                result.close();
+                select.close();
+                connection.close();
             }
+            catch (Exception e) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("errorMessage", e.getMessage());
+                out.write(jsonObject.toString());
 
-            out.write(jsonArray.toString());
-
-            res.setStatus(200);
-
-            result.close();
-            select.close();
-            connection.close();
+                res.setStatus(500);
+            }
         }
-        catch (Exception e) {
+        else {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
+            jsonObject.addProperty("redirect", true);
             out.write(jsonObject.toString());
-
-            res.setStatus(500);
         }
-
         out.close();
     }
 

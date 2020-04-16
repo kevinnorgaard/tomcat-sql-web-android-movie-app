@@ -19,52 +19,62 @@ public class StarServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        res.setContentType("application/json");
         PrintWriter out = res.getWriter();
+        res.setContentType("application/json");
 
-        try {
-            // connect to the database
-            Connection connection = dataSource.getConnection();
+        HttpSession session = req.getSession();
+        Object loggedIn = session.getAttribute("loggedIn");
 
-            // create and execute a SQL statement
-            Statement select = connection.createStatement();
-            String query = "SELECT s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies FROM stars s, stars_in_movies sm, movies m WHERE s.id = sm.starId AND sm.movieId = m.id AND s.id = '" + req.getParameter("id") + "'";
 
-            ResultSet result = select.executeQuery(query);
+        if (loggedIn != null && (boolean)loggedIn) {
+            try {
+                // connect to the database
+                Connection connection = dataSource.getConnection();
 
-            JsonArray jsonArray = new JsonArray();
+                // create and execute a SQL statement
+                Statement select = connection.createStatement();
+                String query = "SELECT s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies FROM stars s, stars_in_movies sm, movies m WHERE s.id = sm.starId AND sm.movieId = m.id AND s.id = '" + req.getParameter("id") + "'";
 
-            // print table content
-            while (result.next()) {
-                String star_name = result.getString("name");
-                String star_birthyear = result.getString("birthYear");
-                String star_movies = result.getString("movies");
+                ResultSet result = select.executeQuery(query);
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("star_name", star_name);
-                jsonObject.addProperty("star_birthyear", getBirthYear(star_birthyear));
-                JsonArray moviesArray = getMoviesArray(star_movies);
-                jsonObject.add("star_movies", moviesArray);
+                JsonArray jsonArray = new JsonArray();
 
-                jsonArray.add(jsonObject);
+                // print table content
+                while (result.next()) {
+                    String star_name = result.getString("name");
+                    String star_birthyear = result.getString("birthYear");
+                    String star_movies = result.getString("movies");
+
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("star_name", star_name);
+                    jsonObject.addProperty("star_birthyear", getBirthYear(star_birthyear));
+                    JsonArray moviesArray = getMoviesArray(star_movies);
+                    jsonObject.add("star_movies", moviesArray);
+
+                    jsonArray.add(jsonObject);
+                }
+
+                out.write(jsonArray.toString());
+
+                res.setStatus(200);
+
+                result.close();
+                select.close();
+                connection.close();
             }
+            catch (Exception e) {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("errorMessage", e.getMessage());
+                out.write(jsonObject.toString());
 
-            out.write(jsonArray.toString());
-
-            res.setStatus(200);
-
-            result.close();
-            select.close();
-            connection.close();
+                res.setStatus(500);
+            }
         }
-        catch (Exception e) {
+        else {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
+            jsonObject.addProperty("redirect", true);
             out.write(jsonObject.toString());
-
-            res.setStatus(500);
         }
-
         out.close();
     }
 

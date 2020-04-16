@@ -1,5 +1,10 @@
+:root {
+    --blue: rgba(0, 139, 139, 1);
+}
+
 * {
     font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
 }
 
 #wrapper {
@@ -10,6 +15,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 10px;
+}
+
+.container {
+    padding: 0 !important;
 }
 
 h1 {
@@ -20,8 +30,41 @@ h1 {
 
 label {
     font-size: 16px;
-    color: rgba(0, 139, 139, 1);
+    color: var(--blue);
     text-transform: uppercase;
+}
+
+input {
+    border: 1px solid lightgrey;
+    background-color: white;
+    outline: none;
+    padding: 5px 10px;
+    min-width: 90px;
+    min-height: 30px;
+}
+
+.white-btn, .colored-btn {
+    border: 1px solid lightgrey;
+    min-width: 90px;
+    min-height: 30px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.white-btn {
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
+
+.colored-btn {
+    cursor: pointer;
+    background-color: var(--blue);
+    color: white !important;
+}
+
+.white-btn:hover, .colored-btn:hover {
+    text-decoration: underline;
 }
 
 .detail {
@@ -36,14 +79,14 @@ table {
 }
 
 th {
-    background-color: rgba(0, 139, 139, 1);
+    background-color: var(--blue);
     color: white;
     white-space: nowrap;
     text-align: center !important;
 }
 
 table, th, td {
-    border: 1px solid rgba(0, 0, 0, 0.4);
+    border: 1px solid lightgrey;
 }
 
 th, td {
@@ -55,6 +98,10 @@ h {
 }
 
 a {
-    color: rgba(0, 139, 139, 1) !important;
+    color: var(--blue) !important;
+}
+
+form {
+    margin-bottom: 10px;
 }
 

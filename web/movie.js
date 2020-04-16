@@ -15,30 +15,35 @@ function getParameterByName(target) {
 }
 
 function handleResult(resultData) {
-    let movieInfoElement = jQuery("#movie_info");
-
-    movieInfoElement.append(
-        "<label>TITLE</label><p class=detail>" + resultData[0]["movie_title"] + "</p>" +
-        "<label>RELEASE YEAR</label><p class=detail>" + resultData[0]["movie_year"] + "</p>" +
-        "<label>DIRECTOR</label><p class=detail>" + resultData[0]["movie_director"] + "</p>" +
-        "<label>RATINGS</label><p class=detail>" + resultData[0]["movie_ratings"] + "</p>");
-
-    let genresTableBodyElement = jQuery("#genres_table_body");
-    let starsTableBodyElement = jQuery("#stars_table_body");
-
-    let genresHTML = "";
-    let starsHTML = "";
-
-    for (let genre of resultData[0]["movie_genres"]) {
-        genresHTML += "<tr><td>" + genre["genre"] + "</td></tr>";
+    if (resultData["redirect"]) {
+        window.location.href = 'login.html';
     }
+    else {
+        let movieInfoElement = jQuery("#movie_info");
 
-    for (let star of resultData[0]["movie_stars"]) {
-        starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
+        movieInfoElement.append(
+            "<label>Title</label><p class=detail>" + resultData[0]["movie_title"] + "</p>" +
+            "<label>Release Year</label><p class=detail>" + resultData[0]["movie_year"] + "</p>" +
+            "<label>Director</label><p class=detail>" + resultData[0]["movie_director"] + "</p>" +
+            "<label>Ratings</label><p class=detail>" + resultData[0]["movie_ratings"] + "</p>");
+
+        let genresTableBodyElement = jQuery("#genres_table_body");
+        let starsTableBodyElement = jQuery("#stars_table_body");
+
+        let genresHTML = "";
+        let starsHTML = "";
+
+        for (let genre of resultData[0]["movie_genres"]) {
+            genresHTML += "<tr><td>" + genre["genre"] + "</td></tr>";
+        }
+
+        for (let star of resultData[0]["movie_stars"]) {
+            starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
+        }
+
+        genresTableBodyElement.append(genresHTML);
+        starsTableBodyElement.append(starsHTML);
     }
-
-    genresTableBodyElement.append(genresHTML);
-    starsTableBodyElement.append(starsHTML);
 }
 
 let movieId = getParameterByName('id');

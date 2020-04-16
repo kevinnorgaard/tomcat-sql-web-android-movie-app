@@ -1,38 +1,41 @@
 function handleMoviesResult(resultData) {
-    console.log("handleMoviesResult: populating Movies table from resultData");
-    let moviesTableBodyElement = jQuery("#movies_table_body");
+    if (resultData["redirect"]) {
+        window.location.href = 'login.html';
+    }
+    else {
+        let moviesTableBodyElement = jQuery("#movies_table_body");
 
-    for (let i = 0; i < resultData.length; i++) {
-        let rowHTML = "";
-        rowHTML += "<tr>";
+        for (let i = 0; i < resultData.length; i++) {
+            let rowHTML = "";
+            rowHTML += "<tr>";
 
-        rowHTML +=
-            "<td>" +
-            '<a href="movie.html?id=' + resultData[i]['movie_id'] + '">'
-            + resultData[i]["movie_title"] +
-            '</a>' +
+            rowHTML +=
+                "<td>" +
+                '<a href="movie.html?id=' + resultData[i]['movie_id'] + '">'
+                + resultData[i]["movie_title"] +
+                '</a>' +
 
-            "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_year"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_director"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["movie_ratings"] + "</td>";
+                "</td>";
+            rowHTML += "<td>" + resultData[i]["movie_year"] + "</td>";
+            rowHTML += "<td>" + resultData[i]["movie_director"] + "</td>";
+            rowHTML += "<td>" + resultData[i]["movie_ratings"] + "</td>";
 
-        rowHTML += "<td>";
-        for (let genre of resultData[i]["movie_genres"]) {
-            rowHTML += genre["genre"] + "<br>";
+            rowHTML += "<td>";
+            for (let genre of resultData[i]["movie_genres"]) {
+                rowHTML += genre["genre"] + "<br>";
+            }
+            rowHTML += "</td>";
+
+            rowHTML += "<td>";
+            for (let star of resultData[i]["movie_stars"]) {
+                rowHTML += '<a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a><br>";
+            }
+            rowHTML += "</td>";
+
+            rowHTML += "</tr>";
+
+            moviesTableBodyElement.append(rowHTML);
         }
-        rowHTML += "</td>";
-
-        rowHTML += "<td>";
-        for (let star of resultData[i]["movie_stars"]) {
-            rowHTML += '<a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a><br>";
-        }
-        rowHTML += "</td>";
-
-        rowHTML += "</tr>";
-
-        // Append the row created to the table body, which will refresh the page
-        moviesTableBodyElement.append(rowHTML);
     }
 }
 
