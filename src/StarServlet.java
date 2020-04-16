@@ -22,63 +22,51 @@ public class StarServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         res.setContentType("application/json");
 
-        HttpSession session = req.getSession();
-        Object loggedIn = session.getAttribute("loggedIn");
+        try {
+            // connect to the database
+            Connection connection = dataSource.getConnection();
 
+            // create and execute a SQL statement
+            Statement select = connection.createStatement();
+            String query = "SELECT s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies FROM stars s, stars_in_movies sm, movies m WHERE s.id = sm.starId AND sm.movieId = m.id AND s.id = '" + req.getParameter("id") + "'";
 
-        if (loggedIn != null && (boolean)loggedIn) {
-            try {
-                // connect to the database
-                Connection connection = dataSource.getConnection();
+            ResultSet result = select.executeQuery(query);
 
-                // create and execute a SQL statement
-                Statement select = connection.createStatement();
-                String query = "SELECT s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies FROM stars s, stars_in_movies sm, movies m WHERE s.id = sm.starId AND sm.movieId = m.id AND s.id = '" + req.getParameter("id") + "'";
+            JsonArray jsonArray = new JsonArray();
 
-                ResultSet result = select.executeQuery(query);
+            // print table content
+            while (result.next()) {
+                String star_name = result.getString("name");
+                String star_birthyear = result.getString("birthYear");
+                String star_movies = result.getString("movies");
 
-                JsonArray jsonArray = new JsonArray();
-
-                // print table content
-                while (result.next()) {
-                    String star_name = result.getString("name");
-                    String star_birthyear = result.getString("birthYear");
-                    String star_movies = result.getString("movies");
-
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("star_name", star_name);
-                    jsonObject.addProperty("star_birthyear", getBirthYear(star_birthyear));
-                    JsonArray moviesArray = getMoviesArray(star_movies);
-                    jsonObject.add("star_movies", moviesArray);
-
-                    jsonArray.add(jsonObject);
-                }
-
-                out.write(jsonArray.toString());
-
-                res.setStatus(200);
-
-                result.close();
-                select.close();
-                connection.close();
-            }
-            catch (Exception e) {
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("errorMessage", e.getMessage());
-                out.write(jsonObject.toString());
+                jsonObject.addProperty("star_name", star_name);
+                jsonObject.addProperty("star_birthyear", formatBirthYear(star_birthyear));
+                JsonArray moviesArray = getMoviesArray(star_movies);
+                jsonObject.add("star_movies", moviesArray);
 
-                res.setStatus(500);
+                jsonArray.add(jsonObject);
             }
+            out.write(jsonArray.toString());
+
+            res.setStatus(200);
+
+            result.close();
+            select.close();
+            connection.close();
         }
-        else {
+        catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("redirect", true);
+            jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
+
+            res.setStatus(500);
         }
         out.close();
     }
 
-    protected String getBirthYear(String birthYear) {
+    protected String formatBirthYear(String birthYear) {
         if (birthYear == null) {
             return "N/A";
         }

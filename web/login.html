@@ -17,20 +17,21 @@
 <body>
 <div id=wrapper>
     <h1>Log In</h1>
-    <form ACTION="login" METHOD="POST">
-        <label for="email">Email:</label><br>
-        <input type="TEXT" id="email" name="email"><br><br>
-        <label for="password">Password:</label><br>
-        <input type="PASSWORD" id="password" name="password"><br><br>
-        <input type="SUBMIT" class="colored-btn" value="Log in">
+    <form id="login-form" action="#" method="post">
+        <label for="email">Email</label><br>
+        <input type="text" id="email" name="email"><br><br>
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" class="colored-btn" value="Log in">
     </form>
+
+    <div id="login-error-message"></div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-<!--<script src="index.js"></script>-->
-
+<script type="text/javascript" src="login.js"></script>
 </body>
 </html>

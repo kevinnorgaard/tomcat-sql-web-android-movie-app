@@ -1,3 +1,5 @@
+import com.google.gson.JsonObject;
+
 import javax.annotation.Resource;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,13 +13,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-@WebServlet(name = "LoginServlet", urlPatterns = "/login")
+@WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
 
         try {
             Connection dbCon = dataSource.getConnection();
@@ -31,22 +35,28 @@ public class LoginServlet extends HttpServlet {
 
             ResultSet rs = statement.executeQuery(query);
 
+            JsonObject responseJsonObject = new JsonObject();
             if (rs.next()) {
                 String id = rs.getString("id");
                 HttpSession session = request.getSession();
                 session.setAttribute("id", id);
                 session.setAttribute("loggedIn", true);
-                response.sendRedirect("index.html");
+
+                responseJsonObject.addProperty("status", "success");
+                responseJsonObject.addProperty("message", "Success");
             }
             else {
-                response.sendRedirect("login.html");
+                responseJsonObject.addProperty("status", "fail");
+                responseJsonObject.addProperty("message", "Incorrect email and/or password");
             }
+            out.write(responseJsonObject.toString());
 
             rs.close();
             statement.close();
             dbCon.close();
-
-        } catch (Exception ex) {
         }
+        catch (Exception ex) {
+        }
+        out.close();
     }
 }

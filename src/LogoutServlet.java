@@ -18,12 +18,11 @@ public class LogoutServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
         try {
             HttpSession session = request.getSession();
             session.setAttribute("loggedIn", false);
-            response.sendRedirect("index.html");
-        } catch (Exception ex) {
+            response.sendRedirect("login.html");
         }
+        catch (Exception ex) { }
     }
 }
