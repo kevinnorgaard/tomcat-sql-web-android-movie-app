@@ -24,8 +24,9 @@ public class MoviesServlet extends HttpServlet {
 
         String title = req.getParameter("title") != null ? req.getParameter("title") : "";
         String year = req.getParameter("year") != null ? req.getParameter("year") : "";
-        String director = req.getParameter("title") != null ? req.getParameter("director") : "";
-        String star = req.getParameter("title") != null ? req.getParameter("star") : "";
+        String director = req.getParameter("director") != null ? req.getParameter("director") : "";
+        String star = req.getParameter("star") != null ? req.getParameter("star") : "";
+        String genre = req.getParameter("genre") != null ? req.getParameter("genre") : "";
 
         try {
             Connection connection = dataSource.getConnection();
@@ -45,10 +46,13 @@ public class MoviesServlet extends HttpServlet {
                 "		ORDER BY r.ratings " +
                 "		DESC) " +
                 "	mr, genres_in_movies gm, genres g " +
-                "	WHERE mr.id = gm.movieId AND gm.genreId = g.id GROUP BY mr.id, mr.ratings) " +
+                "	WHERE mr.id = gm.movieId " + "" +
+                "   AND gm.genreId = g.id " +
+                "   GROUP BY mr.id, mr.ratings) " +
                 "mg, stars_in_movies sm, stars s " +
                 "WHERE mg.id = sm.movieId " +
                 "AND sm.starId = s.id " +
+                "%s " +
                 "%s " +
                 "GROUP BY mg.id, mg.ratings " +
                 "ORDER BY mg.ratings DESC " +
@@ -56,7 +60,8 @@ public class MoviesServlet extends HttpServlet {
                     title != "" ? "AND m.title LIKE '%" + title + "%'" : "",
                     year != "" ? "AND m.year = " + year : "",
                     director != "" ? "AND m.director LIKE '%" + director + "%'" : "",
-                    star != "" ? "AND s.name LIKE '%" + star + "%'" : ""
+                    star != "" ? "AND s.name LIKE '%" + star + "%'" : "",
+                    genre != "" ? "AND genres LIKE '%" + genre + "%'": ""
             );
 
             ResultSet result = select.executeQuery(query);
