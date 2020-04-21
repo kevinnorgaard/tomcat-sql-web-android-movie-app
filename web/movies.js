@@ -20,7 +20,8 @@ function formatUrl() {
     let director = getParameterByName("director") != null ? getParameterByName("director") : "";
     let star = getParameterByName("star") != null ? getParameterByName("star") : "";
     let genre = getParameterByName("genre") != null ? getParameterByName("genre") : "";
-    return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre;
+    let titlestart = getParameterByName("titlestart") != null ? getParameterByName("titlestart") : "";
+    return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre + "&titlestart=" + titlestart;
 }
 
 function handleMoviesResult(resultData) {

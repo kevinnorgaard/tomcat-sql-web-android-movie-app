@@ -27,6 +27,7 @@ public class MoviesServlet extends HttpServlet {
         String director = req.getParameter("director") != null ? req.getParameter("director") : "";
         String star = req.getParameter("star") != null ? req.getParameter("star") : "";
         String genre = req.getParameter("genre") != null ? req.getParameter("genre") : "";
+        String titlestart = req.getParameter("titlestart") != null ? req.getParameter("titlestart") : "";
 
         try {
             Connection connection = dataSource.getConnection();
@@ -40,6 +41,7 @@ public class MoviesServlet extends HttpServlet {
                 "		SELECT m.id, m.title, m.year, m.director, r.ratings " +
                 "		FROM movies m, ratings r " +
                 "		WHERE r.movieId = m.id " +
+                "       %s " +
                 "       %s " +
                 "       %s " +
                 "       %s " +
@@ -57,11 +59,12 @@ public class MoviesServlet extends HttpServlet {
                 "GROUP BY mg.id, mg.ratings " +
                 "ORDER BY mg.ratings DESC " +
                 "LIMIT 20",
-                    title != "" ? "AND m.title LIKE '%" + title + "%'" : "",
-                    year != "" ? "AND m.year = " + year : "",
-                    director != "" ? "AND m.director LIKE '%" + director + "%'" : "",
-                    star != "" ? "AND s.name LIKE '%" + star + "%'" : "",
-                    genre != "" ? "AND genres LIKE '%" + genre + "%'": ""
+                    !title.equals("") ? "AND m.title LIKE '%" + title + "%'" : "",
+                    !titlestart.equals("") ? (titlestart.equals("*") ? "AND m.title REGEXP '^[^a-zA-Z0-9]'" : "AND m.title LIKE '" + titlestart + "%'") : "",
+                    !year.equals("") ? "AND m.year = " + year : "",
+                    !director.equals("") ? "AND m.director LIKE '%" + director + "%'" : "",
+                    !star.equals("") ? "AND s.name LIKE '%" + star + "%'" : "",
+                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'": ""
             );
 
             ResultSet result = select.executeQuery(query);
@@ -90,6 +93,8 @@ public class MoviesServlet extends HttpServlet {
 
                 jsonArray.add(jsonObject);
             }
+            jsonArray.add(query);
+
             out.write(jsonArray.toString());
 
             res.setStatus(200);
