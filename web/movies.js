@@ -24,6 +24,23 @@ function formatUrl() {
     return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre + "&titlestart=" + titlestart;
 }
 
+function handleCartResult(resultData) {
+    console.log("handling cart response");
+    console.log(resultData);
+}
+
+function submitLoginForm(id, formSubmitEvent) {
+    console.log("submitted");
+    console.log(id);
+    $.ajax(
+        "api/cart", {
+            method: "POST",
+            data: {"id": id},
+            success: handleCartResult
+        }
+    );
+}
+
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
     console.log(resultData);
@@ -55,7 +72,7 @@ function handleMoviesResult(resultData) {
         }
         rowHTML += "</td>";
 
-        rowHTML += "<td><button class=\"colored-btn\">Add to Cart</button></td>";
+        rowHTML += "<td><button class=\"colored-btn\" onclick=\"submitLoginForm('" + resultData[i]['movie_id'] + "');\">Add to Cart</button></td>";
 
         rowHTML += "</tr>";
 

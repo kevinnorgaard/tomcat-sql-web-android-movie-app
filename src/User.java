@@ -20,6 +20,16 @@ public class User {
         return this.shoppingCart;
     }
 
+    public int cartIndexOf(String id) {
+        List<Movie> cart = getCart();
+        for (int i = 0; i < cart.size(); i++) {
+            if (cart.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void removeFromCart(Movie movie) {
         this.shoppingCart.remove(movie);
     }

@@ -93,8 +93,6 @@ public class MoviesServlet extends HttpServlet {
 
                 jsonArray.add(jsonObject);
             }
-            jsonArray.add(query);
-
             out.write(jsonArray.toString());
 
             res.setStatus(200);

@@ -27,16 +27,7 @@ public class CartServlet extends HttpServlet {
     private DataSource dataSource;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//        HttpSession session = request.getSession();
-//        String sessionId = session.getId();
-//        long lastAccessTime = session.getLastAccessedTime();
-//
-//        JsonObject responseJsonObject = new JsonObject();
-//        responseJsonObject.addProperty("sessionID", sessionId);
-//        responseJsonObject.addProperty("lastAccessTime", new Date(lastAccessTime).toString());
-//
-//        // write all the data into the jsonObject
-//        response.getWriter().write(responseJsonObject.toString());
+
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -46,10 +37,12 @@ public class CartServlet extends HttpServlet {
         HttpSession session = request.getSession();
 
         User user = (User) session.getAttribute("user");
-        List<Movie> cartItems = user.getCart();
 
         String id = request.getParameter("id");
-        String quantity = request.getParameter("quantity");
+
+        int index = user.cartIndexOf(id);
+
+        List<Movie> cartItems = user.getCart();
 
         try {
             Connection connection = dataSource.getConnection();
@@ -62,10 +55,16 @@ public class CartServlet extends HttpServlet {
             if (result.next()) {
                 String movie_title = result.getString("title");
 
-                Movie item = new Movie(movie_title, 14.34, Integer.parseInt(quantity));
+                if (index == -1) {
+                    Movie item = new Movie(id, movie_title, 14.99, 1);
 
-                synchronized (cartItems) {
-                    cartItems.add(item);
+                    synchronized (cartItems) {
+                        cartItems.add(item);
+                    }
+                }
+                else {
+                    Movie movie = cartItems.get(index);
+                    movie.updateQuantity(movie.getQuantity() + 1);
                 }
 
                 JsonArray jsonArray = listToJson(cartItems);
