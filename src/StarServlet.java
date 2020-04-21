@@ -22,25 +22,36 @@ public class StarServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         res.setContentType("application/json");
 
+        String id = req.getParameter("id");
+
         try {
             // connect to the database
             Connection connection = dataSource.getConnection();
 
             // create and execute a SQL statement
             Statement select = connection.createStatement();
-            String query = "SELECT s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies FROM stars s, stars_in_movies sm, movies m WHERE s.id = sm.starId AND sm.movieId = m.id AND s.id = '" + req.getParameter("id") + "'";
+            String query = String.format(
+                "SELECT s.id, s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies " +
+                "FROM stars s, stars_in_movies sm, movies m " +
+                "WHERE s.id = sm.starId " +
+                "AND sm.movieId = m.id " +
+                "AND s.id = '%s'",
+                    id
+            );
 
             ResultSet result = select.executeQuery(query);
 
             JsonArray jsonArray = new JsonArray();
 
             // print table content
-            while (result.next()) {
+            if (result.next()) {
+                String star_id = result.getString("id");
                 String star_name = result.getString("name");
                 String star_birthyear = result.getString("birthYear");
                 String star_movies = result.getString("movies");
 
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("star_id", star_id);
                 jsonObject.addProperty("star_name", star_name);
                 jsonObject.addProperty("star_birthyear", formatBirthYear(star_birthyear));
                 JsonArray moviesArray = getMoviesArray(star_movies);

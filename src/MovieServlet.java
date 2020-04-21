@@ -22,30 +22,35 @@ public class MovieServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         res.setContentType("application/json");
 
+        String id = req.getParameter("id");
+
         try {
             Connection connection = dataSource.getConnection();
 
             Statement select = connection.createStatement();
-            String query = "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
-                    "FROM (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
-                    "FROM (SELECT m.id, m.title, m.year, m.director, r.ratings " +
-                    "FROM movies m, ratings r " +
-                    "WHERE r.movieId = m.id AND id = '" + req.getParameter("id") +
-                    "' ORDER BY r.ratings " +
-                    "DESC LIMIT 20) as mr, genres_in_movies gm, genres g " +
-                    "WHERE mr.id = gm.movieId " +
-                    "AND gm.genreId = g.id " +
-                    "GROUP BY mr.id, mr.ratings) as mg, stars_in_movies sm, stars s " +
-                    "WHERE mg.id = sm.movieId " +
-                    "AND sm.starId = s.id " +
-                    "GROUP BY mg.id, mg.ratings " +
-                    "ORDER BY mg.ratings DESC";
+            String query = String.format(
+                "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
+                "FROM (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
+                "FROM (SELECT m.id, m.title, m.year, m.director, r.ratings " +
+                "FROM movies m, ratings r " +
+                "WHERE r.movieId = m.id AND id = '%s'" +
+                "ORDER BY r.ratings " +
+                "DESC LIMIT 20) as mr, genres_in_movies gm, genres g " +
+                "WHERE mr.id = gm.movieId " +
+                "AND gm.genreId = g.id " +
+                "GROUP BY mr.id, mr.ratings) as mg, stars_in_movies sm, stars s " +
+                "WHERE mg.id = sm.movieId " +
+                "AND sm.starId = s.id " +
+                "GROUP BY mg.id, mg.ratings " +
+                "ORDER BY mg.ratings DESC",
+                    id
+            );
 
             ResultSet result = select.executeQuery(query);
 
             JsonArray jsonArray = new JsonArray();
 
-            while (result.next()) {
+            if (result.next()) {
                 String movie_id = result.getString("id");
                 String movie_title = result.getString("title");
                 String movie_year = result.getString("year");

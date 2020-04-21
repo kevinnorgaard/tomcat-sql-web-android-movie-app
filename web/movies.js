@@ -1,5 +1,30 @@
+function getParameterByName(target) {
+    // Get request URL
+    let url = window.location.href;
+    // Encode target parameter name to url encoding
+    target = target.replace(/[\[\]]/g, "\\$&");
+
+    // Ues regular expression to find matched parameter value
+    let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+
+    // Return the decoded parameter value
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function formatUrl() {
+    let title = getParameterByName("title") != null ? getParameterByName("title") : "";
+    let year = getParameterByName("year") != null ? getParameterByName("year") : "";
+    let director = getParameterByName("director") != null ? getParameterByName("director") : "";
+    let star = getParameterByName("star") != null ? getParameterByName("star") : "";
+    return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star;
+}
+
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
+    console.log(resultData);
 
     for (let i = 0; i < resultData.length; i++) {
         let rowHTML = "";
@@ -37,8 +62,8 @@ function handleMoviesResult(resultData) {
 }
 
 jQuery.ajax({
-    dataType: "json", // Setting return data type
-    method: "GET", // Setting request method
-    url: "api/movies", // Setting request url, which is mapped by MoviesServlet
-    success: (resultData) => handleMoviesResult(resultData) // Setting callback function to handle data returned successfully by the MoviesServlet
+    dataType: "json",
+    method: "GET",
+    url: formatUrl(),
+    success: (resultData) => handleMoviesResult(resultData)
 });

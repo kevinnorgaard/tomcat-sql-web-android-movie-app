@@ -16,15 +16,24 @@
 
 <body>
 <div id=wrapper>
-    <h1>Main Page</h1>
-    <a  class="colored-btn" href="login.html">Log in</a><br>
-    <a class="colored-btn" href="search.html">Go to Search</a>
-    <a class="colored-btn" href="movies.html">Go to all movies</a>
+    <h1>Search</h1>
+    <form id="search-form" action="api/movies" method="get">
+        <label for="title">Title</label><br>
+        <input type="text" id="title" name="title"><br><br>
+        <label for="year">Year</label><br>
+        <input type="text" id="year" name="year"><br><br>
+        <label for="director">Director</label><br>
+        <input type="text" id="director" name="director"><br><br>
+        <label for="star">Star</label><br>
+        <input type="text" id="star" name="star"><br><br>
+        <input type="submit" class="colored-btn" value="Search">
+    </form>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
+<script type="text/javascript" src="search.js"></script>
 </body>
 </html>
