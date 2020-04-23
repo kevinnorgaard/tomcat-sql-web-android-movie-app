@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Fabflix</title>
 </head>
@@ -20,6 +21,22 @@
     <form ACTION="logout" METHOD="POST">
         <input type="SUBMIT" value="Log out">
     </form>
+    <div>
+        <label>Movies per Page</label>
+        <select id="limit-select">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+    <div id="pagination-container">
+        <button><i class="fa fa-chevron-left"></i></button>
+        <div id="pagination">
+
+        </div>
+        <button onclick="nextPage()"><i class="fa fa-chevron-right"></i></button>
+    </div>
     <table id=movies_table>
         <thead>
         <tr>

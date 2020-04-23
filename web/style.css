@@ -53,6 +53,12 @@ input {
     outline: none;
 }
 
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .white-btn {
     cursor: pointer;
     background-color: white;
@@ -72,6 +78,20 @@ input {
 .detail {
     font-size: 22px;
     font-weight: 600;
+}
+
+#offset-select {
+    outline: none;
+    border: lightgrey 1px solid;
+    border-radius: 0;
+    outline: none;
+}
+
+#pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 table {

@@ -27,7 +27,9 @@ public class MoviesServlet extends HttpServlet {
         String director = req.getParameter("director") != null ? req.getParameter("director") : "";
         String star = req.getParameter("star") != null ? req.getParameter("star") : "";
         String genre = req.getParameter("genre") != null ? req.getParameter("genre") : "";
-        String titlestart = req.getParameter("titlestart") != null ? req.getParameter("titlestart") : "";
+        String titleStart = req.getParameter("titlestart") != null ? req.getParameter("titlestart") : "";
+        String limit = req.getParameter("limit") != null ? req.getParameter("limit") : "";
+        String offset = req.getParameter("offset") != null ? req.getParameter("offset") : "";
 
         try {
             Connection connection = dataSource.getConnection();
@@ -63,19 +65,25 @@ public class MoviesServlet extends HttpServlet {
                 "%s " +
                 "GROUP BY mg.id, mg.ratings " +
                 "ORDER BY mg.ratings DESC " +
-                "LIMIT 20",
+                "LIMIT %s " +
+                "OFFSET %s ",
                     !title.equals("") ? "AND m.title LIKE '%" + title + "%'" : "",
-                    !titlestart.equals("") ? (titlestart.equals("*") ? "AND m.title REGEXP '^[^a-zA-Z0-9]'" : "AND m.title LIKE '" + titlestart + "%'") : "",
+                    !titleStart.equals("") ? (titleStart.equals("*") ? "AND m.title REGEXP '^[^a-zA-Z0-9]'" : "AND m.title LIKE '" + titleStart + "%'") : "",
                     !year.equals("") ? "AND m.year = " + year : "",
                     !director.equals("") ? "AND m.director LIKE '%" + director + "%'" : "",
                     !star.equals("") ? "AND s.name LIKE '%" + star + "%'" : "",
-                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'": ""
+                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'": "",
+                    !limit.equals("") ? limit : "10",
+                    !offset.equals("") ? offset : "0"
             );
 
             ResultSet result = select.executeQuery(query);
 
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObject = new JsonObject();
 
+            jsonObject.addProperty("offset", offset);
+
+            JsonArray dataArray = new JsonArray();
             while (result.next()) {
                 String movie_id = result.getString("id");
                 String movie_title = result.getString("title");
@@ -85,20 +93,22 @@ public class MoviesServlet extends HttpServlet {
                 String movie_genres = result.getString("genres");
                 String movie_stars = result.getString("stars");
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("movie_id", movie_id);
-                jsonObject.addProperty("movie_title", movie_title);
-                jsonObject.addProperty("movie_year", movie_year);
-                jsonObject.addProperty("movie_director", movie_director);
-                jsonObject.addProperty("movie_ratings", movie_ratings);
+                JsonObject dataObject = new JsonObject();
+                dataObject.addProperty("movie_id", movie_id);
+                dataObject.addProperty("movie_title", movie_title);
+                dataObject.addProperty("movie_year", movie_year);
+                dataObject.addProperty("movie_director", movie_director);
+                dataObject.addProperty("movie_ratings", movie_ratings);
                 JsonArray genresArray = genresToArray(movie_genres);
-                jsonObject.add("movie_genres", genresArray);
+                dataObject.add("movie_genres", genresArray);
                 JsonArray starsArray = starsToArray(movie_stars);
-                jsonObject.add("movie_stars", starsArray);
+                dataObject.add("movie_stars", starsArray);
 
-                jsonArray.add(jsonObject);
+                dataArray.add(dataObject);
             }
-            out.write(jsonArray.toString());
+            jsonObject.add("data", dataArray);
+
+            out.write(jsonObject.toString());
 
             res.setStatus(200);
 
