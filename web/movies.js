@@ -45,6 +45,14 @@ function sortGenres(a, b) {
     return a["genre"].localeCompare(b["genre"]);
 }
 
+function sortStars(a, b) {
+    let diff = b["star_feature_count"] - a["star_feature_count"];
+    if (diff === 0) {
+        return a["star_name"].localeCompare(b["star_name"])
+    }
+    return diff;
+}
+
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
     console.log(resultData);
@@ -72,8 +80,9 @@ function handleMoviesResult(resultData) {
         rowHTML += "</td>";
 
         rowHTML += "<td>";
-        for (let star of resultData[i]["movie_stars"]) {
-            rowHTML += '<a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a><br>";
+        let stars = resultData[i]["movie_stars"].sort(sortStars);
+        for (let star of stars) {
+            rowHTML += '<a class=\"star-item\" href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a><br>";
         }
         rowHTML += "</td>";
 

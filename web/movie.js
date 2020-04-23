@@ -16,6 +16,14 @@ function sortGenres(a, b) {
     return a["genre"].localeCompare(b["genre"]);
 }
 
+function sortStars(a, b) {
+    let diff = b["star_feature_count"] - a["star_feature_count"];
+    if (diff === 0) {
+        return a["star_name"].localeCompare(b["star_name"])
+    }
+    return diff;
+}
+
 function handleResult(resultData) {
     console.log("Loading movie data into tables");
     console.log(resultData);
@@ -38,8 +46,9 @@ function handleResult(resultData) {
         genresHTML += "<tr><td><a href=\"movies.html?genre=" + genre["genre"] + "\">" + genre["genre"] + "</a></td></tr>";
     }
 
-    for (let star of resultData[0]["movie_stars"]) {
-        starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
+    let stars = resultData[0]["movie_stars"].sort(sortStars);
+    for (let star of stars) {
+        starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + star["star_feature_count"] + "</a></td></tr>";
     }
 
     $("#id").val(resultData[0]["movie_id"]);

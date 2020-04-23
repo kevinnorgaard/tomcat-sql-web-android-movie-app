@@ -29,20 +29,31 @@ public class MovieServlet extends HttpServlet {
 
             Statement select = connection.createStatement();
             String query = String.format(
-                "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id) SEPARATOR ';') as stars " +
-                "FROM (SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
-                "FROM (SELECT m.id, m.title, m.year, m.director, r.ratings " +
-                "FROM movies m, ratings r " +
-                "WHERE r.movieId = m.id AND id = '%s'" +
-                "ORDER BY r.ratings " +
-                "DESC LIMIT 20) as mr, genres_in_movies gm, genres g " +
-                "WHERE mr.id = gm.movieId " +
-                "AND gm.genreId = g.id " +
-                "GROUP BY mr.id, mr.ratings) as mg, stars_in_movies sm, stars s " +
+                "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id, ',', s.count) SEPARATOR ';') as stars " +
+                "FROM (" +
+                "    SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
+                "    FROM (" +
+                "        SELECT m.id, m.title, m.year, m.director, r.ratings " +
+                "        FROM movies m, ratings r " +
+                "        WHERE r.movieId = m.id " +
+                "        AND id = '%s'" +
+                "        ORDER BY r.ratings " +
+                "        DESC LIMIT 20 " +
+                "    ) as mr, genres_in_movies gm, genres g " +
+                "    WHERE mr.id = gm.movieId " +
+                "    AND gm.genreId = g.id " +
+                "    GROUP BY mr.id, mr.ratings " +
+                ") as mg, ( " +
+                "    SELECT s.id, s.name, count(s.id) as count " +
+                "    FROM stars s, stars_in_movies sm " +
+                "    WHERE s.id = sm.starId " +
+                "    GROUP BY s.id " +
+                ") s, stars_in_movies sm " +
                 "WHERE mg.id = sm.movieId " +
                 "AND sm.starId = s.id " +
                 "GROUP BY mg.id, mg.ratings " +
-                "ORDER BY mg.ratings DESC",
+                "ORDER BY mg.ratings " +
+                "DESC",
                     id
             );
 
@@ -109,10 +120,12 @@ public class MovieServlet extends HttpServlet {
             String star = starsArray[i];
             JsonObject jsonObject = new JsonObject();
             String[] nameAndId = star.split(",");
-            String star_id = nameAndId[1];
             String star_name = nameAndId[0];
+            String star_id = nameAndId[1];
+            int star_feature_count = Integer.parseInt(nameAndId[2]);
             jsonObject.addProperty("star_id", star_id);
             jsonObject.addProperty("star_name", star_name);
+            jsonObject.addProperty("star_feature_count", star_feature_count);
             jsonArray.add(jsonObject);
         }
         return jsonArray;

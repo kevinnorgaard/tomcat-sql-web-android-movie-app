@@ -103,6 +103,10 @@ a {
     color: var(--blue) !important;
 }
 
+.star-item {
+    white-space: nowrap;
+}
+
 form {
     margin-bottom: 10px;
 }
