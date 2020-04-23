@@ -25,15 +25,20 @@ function sortStars(a, b) {
 }
 
 function handleResult(resultData) {
-    console.log("Loading movie data into tables");
     console.log(resultData);
+
+    let backBtn = jQuery("#back-btn");
+    backBtn.attr("href", "movies.html?" + resultData["prevParams"]);
+
     let movieInfoElement = jQuery("#movie_info");
 
+    let data = resultData["data"];
+
     movieInfoElement.append(
-        "<label>Title</label><p class=detail>" + resultData[0]["movie_title"] + "</p>" +
-        "<label>Release Year</label><p class=detail>" + resultData[0]["movie_year"] + "</p>" +
-        "<label>Director</label><p class=detail>" + resultData[0]["movie_director"] + "</p>" +
-        "<label>Ratings</label><p class=detail>" + resultData[0]["movie_ratings"] + "</p>");
+        "<label>Title</label><p class=detail>" + data["movie_title"] + "</p>" +
+        "<label>Release Year</label><p class=detail>" + data["movie_year"] + "</p>" +
+        "<label>Director</label><p class=detail>" + data["movie_director"] + "</p>" +
+        "<label>Rating</label><p class=detail>" + data["movie_ratings"] + "</p>");
 
     let genresTableBodyElement = jQuery("#genres_table_body");
     let starsTableBodyElement = jQuery("#stars_table_body");
@@ -41,17 +46,17 @@ function handleResult(resultData) {
     let genresHTML = "";
     let starsHTML = "";
 
-    let genres = resultData[0]["movie_genres"].sort(sortGenres);
+    let genres = data["movie_genres"].sort(sortGenres);
     for (let genre of genres) {
         genresHTML += "<tr><td><a href=\"movies.html?genre=" + genre["genre"] + "\">" + genre["genre"] + "</a></td></tr>";
     }
 
-    let stars = resultData[0]["movie_stars"].sort(sortStars);
+    let stars = data["movie_stars"].sort(sortStars);
     for (let star of stars) {
-        starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + star["star_feature_count"] + "</a></td></tr>";
+        starsHTML += '<tr><td><a href="star.html?id=' + star["star_id"] + '">' + star["star_name"] + "</a></td></tr>";
     }
 
-    $("#id").val(resultData[0]["movie_id"]);
+    $("#id").val(data["movie_id"]);
 
     genresTableBodyElement.append(genresHTML);
     starsTableBodyElement.append(starsHTML);

@@ -131,3 +131,7 @@ form {
     margin-bottom: 10px;
 }
 
+#prev-btn:disabled {
+    color: white;
+}
+

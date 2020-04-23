@@ -23,6 +23,7 @@ public class MovieServlet extends HttpServlet {
         res.setContentType("application/json");
 
         String id = req.getParameter("id");
+        String prevParams = (String) req.getSession().getAttribute("prevParams");
 
         try {
             Connection connection = dataSource.getConnection();
@@ -59,7 +60,8 @@ public class MovieServlet extends HttpServlet {
 
             ResultSet result = select.executeQuery(query);
 
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("prevParams", prevParams);
 
             if (result.next()) {
                 String movie_id = result.getString("id");
@@ -70,20 +72,20 @@ public class MovieServlet extends HttpServlet {
                 String movie_genres = result.getString("genres");
                 String movie_stars = result.getString("stars");
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("movie_id", movie_id);
-                jsonObject.addProperty("movie_title", movie_title);
-                jsonObject.addProperty("movie_year", movie_year);
-                jsonObject.addProperty("movie_director", movie_director);
-                jsonObject.addProperty("movie_ratings", movie_ratings);
+                JsonObject dataObj = new JsonObject();
+                dataObj.addProperty("movie_id", movie_id);
+                dataObj.addProperty("movie_title", movie_title);
+                dataObj.addProperty("movie_year", movie_year);
+                dataObj.addProperty("movie_director", movie_director);
+                dataObj.addProperty("movie_ratings", movie_ratings);
                 JsonArray genresArray = genresToArray(movie_genres);
-                jsonObject.add("movie_genres", genresArray);
+                dataObj.add("movie_genres", genresArray);
                 JsonArray starArray = starsToArray(movie_stars);
-                jsonObject.add("movie_stars", starArray);
+                dataObj.add("movie_stars", starArray);
 
-                jsonArray.add(jsonObject);
+                jsonObj.add("data", dataObj);
             }
-            out.write(jsonArray.toString());
+            out.write(jsonObj.toString());
 
             res.setStatus(200);
 

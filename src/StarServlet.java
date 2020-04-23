@@ -23,6 +23,7 @@ public class StarServlet extends HttpServlet {
         res.setContentType("application/json");
 
         String id = req.getParameter("id");
+        String prevParams = (String) req.getSession().getAttribute("prevParams");
 
         try {
             // connect to the database
@@ -41,7 +42,8 @@ public class StarServlet extends HttpServlet {
 
             ResultSet result = select.executeQuery(query);
 
-            JsonArray jsonArray = new JsonArray();
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("prevParams", prevParams);
 
             // print table content
             if (result.next()) {
@@ -57,9 +59,9 @@ public class StarServlet extends HttpServlet {
                 JsonArray moviesArray = getMoviesArray(star_movies);
                 jsonObject.add("star_movies", moviesArray);
 
-                jsonArray.add(jsonObject);
+                jsonObj.add("data", jsonObject);
             }
-            out.write(jsonArray.toString());
+            out.write(jsonObj.toString());
 
             res.setStatus(200);
 

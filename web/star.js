@@ -15,20 +15,26 @@ function getParameterByName(target) {
 }
 
 function handleResult(resultData) {
+    console.log(resultData);
+
+    let backBtn = jQuery("#back-btn");
+    backBtn.attr("href", "movies.html?" + resultData["prevParams"]);
+
     let starInfoElement = jQuery("#star_info");
 
-    starInfoElement.append("<label>Name</label><p class=detail>" + resultData[0]["star_name"] + "</p>" +
-        "<label>Birth Year</label><p class=detail>" + resultData[0]["star_birthyear"] + "</p>");
+    let data = resultData["data"];
 
-    let movieTableBodyElement = jQuery("#star_table_body");
+    starInfoElement.append("<label>Name</label><p class=detail>" + data["star_name"] + "</p>" +
+        "<label>Birth Year</label><p class=detail>" + data["star_birthyear"] + "</p>");
+
+    let starTableBodyElement = jQuery("#star_table_body");
 
     let rowHTML = "";
-    for (let movie of resultData[0]["star_movies"]) {
+    for (let movie of data["star_movies"]) {
         rowHTML += '<tr><td><a href="movie.html?id=' + movie["movie_id"] + '">' + movie["movie_title"] + "</a></td></tr>";
     }
 
-    // Append the row created to the table body, which will refresh the page
-    movieTableBodyElement.append(rowHTML);
+    starTableBodyElement.append(rowHTML);
 }
 
 let starId = getParameterByName('id');

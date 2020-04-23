@@ -30,13 +30,30 @@
             <option value="100">100</option>
         </select>
     </div>
+    <div>
+        <label>Primary Sort</label>
+        <select onchange="onSelectPrimarySort()" id="primary-sort">
+            <option value="title-asc">Title Asc</option>
+            <option value="title-desc">Title Desc</option>
+            <option value="rating-asc">Rating Asc</option>
+            <option value="rating-desc">Rating Desc</option>
+        </select>
+        <label>Secondary Sort</label>
+        <select onchange="onSelectSecondarySort()" id="secondary-sort">
+            <option value="">None</option>
+            <option value="rating-asc">Rating Asc</option>
+            <option value="rating-desc">Rating Desc</option>
+            <option value="title-asc">Title Asc</option>
+            <option value="title-desc">Title Desc</option>
+        </select>
+    </div>
     <table id=movies_table>
         <thead>
         <tr>
             <th>Title</th>
             <th>Release Year</th>
             <th>Director</th>
-            <th>Ratings</th>
+            <th>Rating</th>
             <th>Genres</th>
             <th>Stars</th>
         </tr>
@@ -44,7 +61,7 @@
         <tbody id=movies_table_body></tbody>
     </table>
     <div id="pagination-container">
-        <button onclick="onPrevPage()"><i class="fa fa-chevron-left"></i></button>
+        <button id="prev-btn" onclick="onPrevPage()"><i class="fa fa-chevron-left"></i></button>
         Page
         <button onclick="onNextPage()"><i class="fa fa-chevron-right"></i></button>
     </div>

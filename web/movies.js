@@ -1,4 +1,7 @@
 let limitSelectElement = jQuery("#limit-select");
+let primarySortSelectElement = jQuery("#primary-sort");
+let secondarySortSelectElement = jQuery("#secondary-sort");
+let prevButtonElement = jQuery("#prev-btn");
 
 function getParameterByName(target) {
     // Get request URL
@@ -27,16 +30,18 @@ function setParameterByName(target, value) {
         results = regex.exec(url);
     if (!results || !results[2]) {
         if (url.indexOf("?") === -1) {
-            window.location.href = url + "?" + target + "=" + value;
+            let newURL = url + "?" + target + "=" + value;
+            window.location.href = newURL;
         }
         else {
-            window.location.href = newUrl = url + "&" + target + "=" + value;
+            let newURL = url + "&" + target + "=" + value;
+            window.location.href = newURL;
         }
     }
 
     if (results[2] !== value) {
         let paramIndex = url.indexOf(results[0]);
-        let valueStartIndex = paramIndex + results[0].indexOf(results[2]);
+        let valueStartIndex = paramIndex + (results[2] === "" ? results[0].length : results[0].indexOf(results[2]));
         let valueEndIndex = valueStartIndex + results[2].length;
         window.location.href = url.substr(0, valueStartIndex) + value + url.substr(valueEndIndex, url.length);
     }
@@ -52,8 +57,10 @@ function formatUrl() {
     let titleStart = getParameterByName("titlestart") != null ? getParameterByName("titlestart") : "";
     let limit = getParameterByName("limit") != null ? getParameterByName("limit") : "";
     let offset = getParameterByName("offset") != null ? getParameterByName("offset") : "";
+    let psort = getParameterByName("psort") != null ? getParameterByName("psort") : "";
+    let ssort = getParameterByName("ssort") != null ? getParameterByName("ssort") : "";
     return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre +
-        "&titlestart=" + titleStart + "&limit=" + limit + "&offset=" + offset;
+        "&titlestart=" + titleStart + "&limit=" + limit + "&offset=" + offset + "&psort=" + psort + "&ssort=" + ssort;
 }
 
 function handleCartResult(resultData) {
@@ -87,6 +94,7 @@ function sortStars(a, b) {
 
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
+    console.log(resultData);
 
     let data = resultData["data"];
     for (let i = 0; i < data.length; i++) {
@@ -121,7 +129,7 @@ function handleMoviesResult(resultData) {
 }
 
 function onSelectLimit() {
-    setParameterByName("limit", limitSelectElement.val())
+    setParameterByName("limit", limitSelectElement.val());
 }
 
 function onPrevPage() {
@@ -136,8 +144,26 @@ function onNextPage() {
     setParameterByName("offset", currentOffset + limitVal);
 }
 
+function onSelectPrimarySort() {
+    setParameterByName("psort", primarySortSelectElement.val())
+}
+
+function onSelectSecondarySort() {
+    setParameterByName("ssort", secondarySortSelectElement.val())
+}
+
 let limitParam = getParameterByName("limit");
 limitSelectElement.val(limitParam ? limitParam : "10");
+
+let psortParam = getParameterByName("psort");
+primarySortSelectElement.val(psortParam ? psortParam : "rating-desc");
+let ssortParam = getParameterByName("ssort");
+secondarySortSelectElement.val(ssortParam ? ssortParam : "");
+
+let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
+if (currentOffset === 0) {
+    prevButtonElement.prop("disabled", true);
+}
 
 jQuery.ajax({
     dataType: "json",

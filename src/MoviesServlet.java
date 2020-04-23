@@ -22,6 +22,8 @@ public class MoviesServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         res.setContentType("application/json");
 
+        req.getSession().setAttribute("prevParams", req.getQueryString());
+
         String title = req.getParameter("title") != null ? req.getParameter("title") : "";
         String year = req.getParameter("year") != null ? req.getParameter("year") : "";
         String director = req.getParameter("director") != null ? req.getParameter("director") : "";
@@ -30,6 +32,8 @@ public class MoviesServlet extends HttpServlet {
         String titleStart = req.getParameter("titlestart") != null ? req.getParameter("titlestart") : "";
         String limit = req.getParameter("limit") != null ? req.getParameter("limit") : "";
         String offset = req.getParameter("offset") != null ? req.getParameter("offset") : "";
+        String psort = req.getParameter("psort") != null ? req.getParameter("psort") : "";
+        String ssort = req.getParameter("ssort") != null ? req.getParameter("ssort") : "";
 
         try {
             Connection connection = dataSource.getConnection();
@@ -64,7 +68,7 @@ public class MoviesServlet extends HttpServlet {
                 "%s " +
                 "%s " +
                 "GROUP BY mg.id, mg.ratings " +
-                "ORDER BY mg.ratings DESC " +
+                "ORDER BY %s %s " +
                 "LIMIT %s " +
                 "OFFSET %s ",
                     !title.equals("") ? "AND m.title LIKE '%" + title + "%'" : "",
@@ -72,17 +76,21 @@ public class MoviesServlet extends HttpServlet {
                     !year.equals("") ? "AND m.year = " + year : "",
                     !director.equals("") ? "AND m.director LIKE '%" + director + "%'" : "",
                     !star.equals("") ? "AND s.name LIKE '%" + star + "%'" : "",
-                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'": "",
+                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'" : "",
+                    !psort.equals("") ? getSortQuery(psort) : "mg.ratings DESC",
+                    !ssort.equals("") ? "," + getSortQuery(ssort) : "",
                     !limit.equals("") ? limit : "10",
                     !offset.equals("") ? offset : "0"
             );
 
             ResultSet result = select.executeQuery(query);
 
-            JsonObject jsonObject = new JsonObject();
+            JsonObject jsonObj = new JsonObject();
 
-            jsonObject.addProperty("offset", offset);
-            jsonObject.addProperty("limit", limit);
+            jsonObj.addProperty("offset", offset);
+            jsonObj.addProperty("limit", limit);
+            jsonObj.addProperty("psort", psort);
+            jsonObj.addProperty("ssort", ssort);
 
             JsonArray dataArray = new JsonArray();
             while (result.next()) {
@@ -94,22 +102,22 @@ public class MoviesServlet extends HttpServlet {
                 String movie_genres = result.getString("genres");
                 String movie_stars = result.getString("stars");
 
-                JsonObject dataObject = new JsonObject();
-                dataObject.addProperty("movie_id", movie_id);
-                dataObject.addProperty("movie_title", movie_title);
-                dataObject.addProperty("movie_year", movie_year);
-                dataObject.addProperty("movie_director", movie_director);
-                dataObject.addProperty("movie_ratings", movie_ratings);
+                JsonObject dataObj = new JsonObject();
+                dataObj.addProperty("movie_id", movie_id);
+                dataObj.addProperty("movie_title", movie_title);
+                dataObj.addProperty("movie_year", movie_year);
+                dataObj.addProperty("movie_director", movie_director);
+                dataObj.addProperty("movie_ratings", movie_ratings);
                 JsonArray genresArray = genresToArray(movie_genres);
-                dataObject.add("movie_genres", genresArray);
+                dataObj.add("movie_genres", genresArray);
                 JsonArray starsArray = starsToArray(movie_stars);
-                dataObject.add("movie_stars", starsArray);
+                dataObj.add("movie_stars", starsArray);
 
-                dataArray.add(dataObject);
+                dataArray.add(dataObj);
             }
-            jsonObject.add("data", dataArray);
+            jsonObj.add("data", dataArray);
 
-            out.write(jsonObject.toString());
+            out.write(jsonObj.toString());
 
             res.setStatus(200);
 
@@ -144,16 +152,34 @@ public class MoviesServlet extends HttpServlet {
         String[] starsArray = stars.split(";");
         for (int i = 0; i < Math.min(3, starsArray.length); i++) {
             String star = starsArray[i];
-            JsonObject jsonObject = new JsonObject();
+            JsonObject jsonObj = new JsonObject();
             String[] nameAndId = star.split(",");
             String star_name = nameAndId[0];
             String star_id = nameAndId[1];
             int star_feature_count = Integer.parseInt(nameAndId[2]);
-            jsonObject.addProperty("star_name", star_name);
-            jsonObject.addProperty("star_id", star_id);
-            jsonObject.addProperty("star_feature_count", star_feature_count);
-            jsonArray.add(jsonObject);
+            jsonObj.addProperty("star_name", star_name);
+            jsonObj.addProperty("star_id", star_id);
+            jsonObj.addProperty("star_feature_count", star_feature_count);
+            jsonArray.add(jsonObj);
         }
         return jsonArray;
+    }
+
+    protected String getSortQuery(String sort) {
+        if (sort.equals("title-asc")) {
+            return "mg.title ASC";
+        }
+        else if (sort.equals("title-desc")) {
+            return "mg.title DESC";
+        }
+        else if (sort.equals("rating-asc")) {
+            return "mg.ratings ASC";
+        }
+        else if (sort.equals("rating-desc")) {
+            return "mg.ratings DESC";
+        }
+        else {
+            return "";
+        }
     }
 }
