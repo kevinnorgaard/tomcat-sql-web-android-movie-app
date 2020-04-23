@@ -82,6 +82,7 @@ public class MoviesServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
 
             jsonObject.addProperty("offset", offset);
+            jsonObject.addProperty("limit", limit);
 
             JsonArray dataArray = new JsonArray();
             while (result.next()) {

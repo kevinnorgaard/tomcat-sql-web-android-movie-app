@@ -1,3 +1,5 @@
+let limitSelectElement = jQuery("#limit-select");
+
 function getParameterByName(target) {
     // Get request URL
     let url = window.location.href;
@@ -48,9 +50,10 @@ function formatUrl() {
     let star = getParameterByName("star") != null ? getParameterByName("star") : "";
     let genre = getParameterByName("genre") != null ? getParameterByName("genre") : "";
     let titleStart = getParameterByName("titlestart") != null ? getParameterByName("titlestart") : "";
+    let limit = getParameterByName("limit") != null ? getParameterByName("limit") : "";
     let offset = getParameterByName("offset") != null ? getParameterByName("offset") : "";
     return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre +
-        "&titlestart=" + titleStart + "&offset=" + offset;
+        "&titlestart=" + titleStart + "&limit=" + limit + "&offset=" + offset;
 }
 
 function handleCartResult(resultData) {
@@ -85,10 +88,6 @@ function sortStars(a, b) {
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
 
-    let pagination = jQuery("#pagination");
-    let offset = resultData["offset"] ? resultData["offset"] : "0";
-    pagination.append(offset);
-
     let data = resultData["data"];
     for (let i = 0; i < data.length; i++) {
         let rowHTML = "";
@@ -121,12 +120,24 @@ function handleMoviesResult(resultData) {
     }
 }
 
-function nextPage() {
-    let limitSelectElement = jQuery("#limit-select");
-    let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
-    let newOffset = currentOffset + parseInt(limitSelectElement.val());
-    setParameterByName("offset", newOffset);
+function onSelectLimit() {
+    setParameterByName("limit", limitSelectElement.val())
 }
+
+function onPrevPage() {
+    let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
+    let limitVal = parseInt(limitSelectElement.val());
+    setParameterByName("offset", currentOffset - limitVal > 0 ? currentOffset - limitVal : 0);
+}
+
+function onNextPage() {
+    let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
+    let limitVal = parseInt(limitSelectElement.val());
+    setParameterByName("offset", currentOffset + limitVal);
+}
+
+let limitParam = getParameterByName("limit");
+limitSelectElement.val(limitParam ? limitParam : "10");
 
 jQuery.ajax({
     dataType: "json",

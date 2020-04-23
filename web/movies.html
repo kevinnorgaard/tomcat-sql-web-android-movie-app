@@ -23,19 +23,12 @@
     </form>
     <div>
         <label>Movies per Page</label>
-        <select id="limit-select">
+        <select onchange="onSelectLimit()" id="limit-select">
             <option value="10">10</option>
             <option value="25">25</option>
             <option value="50">50</option>
             <option value="100">100</option>
         </select>
-    </div>
-    <div id="pagination-container">
-        <button><i class="fa fa-chevron-left"></i></button>
-        <div id="pagination">
-
-        </div>
-        <button onclick="nextPage()"><i class="fa fa-chevron-right"></i></button>
     </div>
     <table id=movies_table>
         <thead>
@@ -50,6 +43,11 @@
         </thead>
         <tbody id=movies_table_body></tbody>
     </table>
+    <div id="pagination-container">
+        <button onclick="onPrevPage()"><i class="fa fa-chevron-left"></i></button>
+        Page
+        <button onclick="onNextPage()"><i class="fa fa-chevron-right"></i></button>
+    </div>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
