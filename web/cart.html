@@ -10,23 +10,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Fabflix</title>
 </head>
 
 <body>
 <div id=wrapper>
-    <h1>Main Page</h1>
-    <a  class="colored-btn" href="login.html">Log in</a><br>
-    <a class="colored-btn" href="search.html">Search</a>
-    <a class="colored-btn" href="browse.html">Browse</a>
-    <a class="colored-btn" href="movies.html">Go to all movies</a>
-    <a class="colored-btn" href="cart.html">Go to cart</a>
+    <h1>Movies</h1>
+    <form ACTION="logout" METHOD="POST">
+        <input type="SUBMIT" value="Log out">
+    </form>
+    <table id=cart_table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody id=cart_table_body></tbody>
+        <tr><td id="total" colspan="3">Total</td></tr>
+    </table>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="cart.js"></script>
 
 </body>
 </html>

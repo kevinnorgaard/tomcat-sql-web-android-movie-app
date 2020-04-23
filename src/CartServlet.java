@@ -27,7 +27,19 @@ public class CartServlet extends HttpServlet {
     private DataSource dataSource;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
 
+        HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
+
+        List<Movie> cartItems = user.getCart();
+
+        JsonArray jsonArray = listToJson(cartItems);
+        out.write(jsonArray.toString());
+
+        response.setStatus(200);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -38,48 +50,65 @@ public class CartServlet extends HttpServlet {
 
         User user = (User) session.getAttribute("user");
 
+        String operation = request.getParameter("op");
         String id = request.getParameter("id");
 
         int index = user.cartIndexOf(id);
 
         List<Movie> cartItems = user.getCart();
 
-        try {
-            Connection connection = dataSource.getConnection();
+        if (operation.equals("INCREMENT")) {
+            Movie movie = cartItems.get(index);
+            movie.updateQuantity(movie.getQuantity() + 1);
+        }
+        else if (operation.equals("DECREMENT")) {
+            Movie movie = cartItems.get(index);
+            if (movie.getQuantity() - 1 >= 1) {
+                movie.updateQuantity(movie.getQuantity() - 1);
+            }
+        }
+        else if (operation.equals("REMOVE")) {
+            cartItems.remove(index);
+        }
+        else if (operation.equals("ADD")) {
+            try {
+                Connection connection = dataSource.getConnection();
 
-            Statement select = connection.createStatement();
-            String query = "SELECT m.title FROM movies m WHERE m.id = '" + id + "'";
+                Statement select = connection.createStatement();
+                String query = String.format(
+                        "SELECT m.title FROM movies m WHERE m.id = '%s'",
+                        id
+                );
 
-            ResultSet result = select.executeQuery(query);
+                ResultSet result = select.executeQuery(query);
 
-            if (result.next()) {
-                String movie_title = result.getString("title");
+                if (result.next()) {
+                    String movie_title = result.getString("title");
 
-                if (index == -1) {
-                    Movie item = new Movie(id, movie_title, 14.99, 1);
+                    if (index == -1) {
+                        Movie item = new Movie(id, movie_title, 14.99, 1);
 
-                    synchronized (cartItems) {
-                        cartItems.add(item);
+                        synchronized (cartItems) {
+                            cartItems.add(item);
+                        }
+                    }
+                    else {
+                        Movie movie = cartItems.get(index);
+                        movie.updateQuantity(movie.getQuantity() + 1);
                     }
                 }
-                else {
-                    Movie movie = cartItems.get(index);
-                    movie.updateQuantity(movie.getQuantity() + 1);
-                }
 
-                JsonArray jsonArray = listToJson(cartItems);
-                out.write(jsonArray.toString());
-
-                response.setStatus(200);
+                result.close();
+                select.close();
+                connection.close();
             }
-
-            result.close();
-            select.close();
-            connection.close();
+            catch (Exception e) {
+                response.setStatus(500);
+            }
         }
-        catch (Exception e) {
-            response.setStatus(500);
-        }
+        JsonArray jsonArray = listToJson(cartItems);
+        out.write(jsonArray.toString());
+        response.setStatus(200);
         out.close();
     }
 
@@ -88,9 +117,11 @@ public class CartServlet extends HttpServlet {
         for (int i = 0; i < list.size(); i++) {
             JsonObject jsonObject = new JsonObject();
             Movie item = list.get(i);
+            String id = item.getId();
             String title = item.getTitle();
             double price = item.getPrice();
             int quantity = item.getQuantity();
+            jsonObject.addProperty("id", id);
             jsonObject.addProperty("title", title);
             jsonObject.addProperty("price", price);
             jsonObject.addProperty("quantity", quantity);

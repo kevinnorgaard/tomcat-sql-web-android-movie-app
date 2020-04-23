@@ -68,13 +68,13 @@ function handleCartResult(resultData) {
     console.log(resultData);
 }
 
-function submitLoginForm(id, formSubmitEvent) {
+function submitCartForm(id, formSubmitEvent) {
     console.log("submitted");
     console.log(id);
     $.ajax(
         "api/cart", {
             method: "POST",
-            data: {"id": id},
+            data: {"id": id, "op": "ADD"},
             success: handleCartResult
         }
     );
@@ -120,7 +120,7 @@ function handleMoviesResult(resultData) {
         }
         rowHTML += "</td>";
 
-        rowHTML += "<td><button class=\"colored-btn\" onclick=\"submitLoginForm('" + data[i]['movie_id'] + "');\">Add to Cart</button></td>";
+        rowHTML += "<td><button class=\"colored-btn\" onclick=\"submitCartForm('" + data[i]['movie_id'] + "');\">Add to Cart</button></td>";
 
         rowHTML += "</tr>";
 

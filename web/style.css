@@ -135,3 +135,18 @@ form {
     color: white;
 }
 
+.fa-minus {
+    margin-right: 5px;
+}
+
+.fa-plus {
+    margin-left: 5px;
+}
+
+.fa-trash {
+    float: right;
+}
+
+.price, #total {
+    text-align: right;
+}
