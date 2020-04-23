@@ -41,6 +41,10 @@ function submitLoginForm(id, formSubmitEvent) {
     );
 }
 
+function sortGenres(a, b) {
+    return a["genre"].localeCompare(b["genre"]);
+}
+
 function handleMoviesResult(resultData) {
     let moviesTableBodyElement = jQuery("#movies_table_body");
     console.log(resultData);
@@ -61,8 +65,9 @@ function handleMoviesResult(resultData) {
         rowHTML += "<td>" + resultData[i]["movie_ratings"] + "</td>";
 
         rowHTML += "<td>";
-        for (let genre of resultData[i]["movie_genres"]) {
-            rowHTML += genre["genre"] + "<br>";
+        let genres = resultData[i]["movie_genres"].sort(sortGenres);
+        for (let genre of genres) {
+            rowHTML += "<a href=\"movies.html?genre=" + genre["genre"] + "\">" + genre["genre"] + "</a><br>";
         }
         rowHTML += "</td>";
 

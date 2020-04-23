@@ -12,6 +12,10 @@ function getParameterByName(target) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function sortGenres(a, b) {
+    return a["genre"].localeCompare(b["genre"]);
+}
+
 function handleResult(resultData) {
     console.log("Loading movie data into tables");
     console.log(resultData);
@@ -29,8 +33,9 @@ function handleResult(resultData) {
     let genresHTML = "";
     let starsHTML = "";
 
-    for (let genre of resultData[0]["movie_genres"]) {
-        genresHTML += "<tr><td>" + genre["genre"] + "</td></tr>";
+    let genres = resultData[0]["movie_genres"].sort(sortGenres);
+    for (let genre of genres) {
+        genresHTML += "<tr><td><a href=\"movies.html?genre=" + genre["genre"] + "\">" + genre["genre"] + "</a></td></tr>";
     }
 
     for (let star of resultData[0]["movie_stars"]) {
