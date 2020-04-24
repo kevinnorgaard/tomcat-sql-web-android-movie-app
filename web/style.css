@@ -44,6 +44,12 @@ input {
     min-height: 30px;
 }
 
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .white-btn, .colored-btn {
     border: 1px solid lightgrey;
     min-width: 90px;
@@ -51,12 +57,7 @@ input {
     padding: 5px 10px;
     text-align: center;
     outline: none;
-}
-
-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-bottom: 10px;
 }
 
 .white-btn {
@@ -65,7 +66,7 @@ button {
     color: black !important;
 }
 
-.colored-btn {
+.colored-btn, .colored-btn a {
     cursor: pointer;
     background-color: var(--blue);
     color: white !important;
@@ -131,8 +132,8 @@ form {
     margin-bottom: 10px;
 }
 
-#prev-btn:disabled {
-    color: white;
+.fa {
+    cursor: pointer;
 }
 
 .fa-minus {

@@ -18,9 +18,12 @@
 <body>
 <div id=wrapper>
     <h1>Movies</h1>
-    <form ACTION="logout" METHOD="POST">
-        <input type="SUBMIT" value="Log out">
-    </form>
+    <div>
+        <form ACTION="logout" METHOD="POST">
+            <input type="SUBMIT" value="Log out">
+        </form>
+        <button class="colored-btn"><a href="cart.html">Go to cart</a></button>
+    </div>
     <div>
         <label>Movies per Page</label>
         <select onchange="onSelectLimit()" id="limit-select">

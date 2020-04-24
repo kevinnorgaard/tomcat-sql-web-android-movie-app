@@ -10,36 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Fabflix</title>
 </head>
 
 <body>
 <div id=wrapper>
-    <h1>Shopping Cart</h1>
-    <form ACTION="logout" METHOD="POST">
-        <input type="SUBMIT" value="Log out">
+    <h1>Payment</h1>
+    <span id="total"></span>
+    <form id="payment-form" action="#" method="post">
+        <label for="fname">First Name</label><br>
+        <input type="text" id="fname" name="fname"><br><br>
+        <label for="lname">Last Name</label><br>
+        <input type="text" id="lname" name="lname"><br><br>
+        <label for="cc-number">Credit Card #</label><br>
+        <input type="text" id="cc-number" name="cc-number"><br><br>
+        <label for="exp-date">Expiration Date</label><br>
+        <input type="text" id="exp-date" name="exp-date"><br><br>
+        <input type="submit" class="colored-btn" value="Place order">
     </form>
-    <table id=cart_table>
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Quantity</th>
-            <th>Price</th>
-        </tr>
-        </thead>
-        <tbody id=cart_table_body></tbody>
-        <tr><td id="total" colspan="3">Total</td></tr>
-    </table>
-    <button class="colored-btn"><a href="payment.html">Proceed to payment</a></button>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-<script type="text/javascript" src="cart.js"></script>
+<script type="text/javascript" src="payment.js"></script>
 
 </body>
 </html>
