@@ -84,9 +84,10 @@ public class CartServlet extends HttpServlet {
 
                 if (result.next()) {
                     String movie_title = result.getString("title");
+                    double price = 14.99;
 
                     if (index == -1) {
-                        Movie item = new Movie(id, movie_title, 14.99, 1);
+                        Movie item = new Movie(id, movie_title, price, 1);
 
                         synchronized (cartItems) {
                             cartItems.add(item);

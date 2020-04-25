@@ -15,9 +15,12 @@
 <body>
 <div id=wrapper>
     <h1>Star Details</h1>
-    <form ACTION="logout" METHOD="POST">
-        <input type="SUBMIT" class="white-btn" value="Log out">
-    </form>
+    <div>
+        <form ACTION="logout" METHOD="POST">
+            <input type="SUBMIT" class="white-btn" value="Log out">
+        </form>
+        <button class="colored-btn"><a href="cart.html">Check out</a></button>
+    </div>
     <div class="container">
         <div class="row">
             <div id=star_info class="col col-md-6"></div>
@@ -33,7 +36,8 @@
             </div>
         </div>
     </div>
-    <a id="back-btn" class="white-btn">Back to movies</a>
+    <button class="white-btn"><a id="back-btn">Back to movies</a></button>
+    <button class="white-btn"><a href="index.html">Back to main page</a></button>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

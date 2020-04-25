@@ -15,9 +15,12 @@
 <body>
 <div id=wrapper>
     <h1>Movie Details</h1>
-    <form ACTION="logout" METHOD="POST">
-        <input type="SUBMIT" class="white-btn" value="Log out">
-    </form>
+    <div>
+        <form ACTION="logout" METHOD="POST">
+            <input type="SUBMIT" class="white-btn" value="Log out">
+        </form>
+        <button class="colored-btn"><a href="cart.html">Check out</a></button>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col col-md-6">
@@ -27,7 +30,7 @@
                     <input type="hidden" id="op" name="op" value="ADD">
                     <input type="hidden" id="id" name="id">
                     <input type="hidden" id="quantity" name="quantity" value="1">
-                    <input type="submit" class="colored-btn" value="Add to Cart">
+                    <input id="cart-btn" type="submit" class="colored-btn" value="Add to Cart">
                 </form>
             </div>
             <div class="col col-md-6">
@@ -50,10 +53,8 @@
             </div>
         </div>
     </div>
-    <div>
-        <a id="back-btn" class="white-btn">Back to movies</a>
-        <a class="colored-btn" href="cart.html">Go to cart</a>
-    </div>
+    <button class="white-btn"><a id="back-btn">Back to movies</a></button>
+    <button class="white-btn"><a href="index.html">Back to main page</a></button>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

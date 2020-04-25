@@ -63,19 +63,26 @@ function formatUrl() {
         "&titlestart=" + titleStart + "&limit=" + limit + "&offset=" + offset + "&psort=" + psort + "&ssort=" + ssort;
 }
 
-function handleCartResult(resultData) {
-    console.log("handling cart response");
+function handleCartResult(resultData, id, i) {
+    console.log("handling cart response", id, i);
     console.log(resultData);
+    let cartBtnElement = jQuery("#cart-btn-" + i);
+    for (let j = 0; j < resultData.length; j++) {
+        let movie = resultData[j];
+        if (movie["id"] === id) {
+            cartBtnElement.text("Added: " + movie["quantity"]);
+        }
+    }
 }
 
-function submitCartForm(id, formSubmitEvent) {
+function submitCartForm(id, i, formSubmitEvent) {
     console.log("submitted");
-    console.log(id);
+    console.log(i, id);
     $.ajax(
         "api/cart", {
             method: "POST",
             data: {"id": id, "op": "ADD"},
-            success: handleCartResult
+            success: (resultData) => handleCartResult(resultData, id, i)
         }
     );
 }
@@ -120,7 +127,7 @@ function handleMoviesResult(resultData) {
         }
         rowHTML += "</td>";
 
-        rowHTML += "<td><button class=\"colored-btn\" onclick=\"submitCartForm('" + data[i]['movie_id'] + "');\">Add to Cart</button></td>";
+        rowHTML += "<td><button id=\"cart-btn-" + i + "\" class=\"colored-btn\" onclick=\"submitCartForm('" + data[i]['movie_id'] + "', " + i + ");\">Add to Cart</button></td>";
 
         rowHTML += "</tr>";
 

@@ -10,13 +10,16 @@ function handleCartResult(resultData) {
         total += resultData[i]["quantity"] * resultData[i]["price"];
     }
 
-    totalElement.text("Total: $" + total);
+    totalElement.text("Total: $" + Math.round(total * 100) / 100);
 }
 
 function handlePaymentResult(resultData) {
     console.log(resultData);
-    if (resultData["valid"]) {
+    if (resultData["processed"]) {
         window.location.href = "confirmation.html";
+    }
+    else {
+        $("#payment-error-message").text("Payment information is invalid");
     }
 }
 

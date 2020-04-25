@@ -72,6 +72,12 @@ button {
     color: white !important;
 }
 
+.white-btn, .white-btn a {
+    cursor: pointer;
+    background-color: white;
+    color: black !important;
+}
+
 .white-btn:hover, .colored-btn:hover {
     text-decoration: underline;
 }

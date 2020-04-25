@@ -5,11 +5,17 @@ public class User {
     private final String email;
     private final String id;
     private final List<Movie> shoppingCart;
+    private final List<Sale> sales;
 
     public User(String id, String email) {
         this.id = id;
         this.email = email;
         this.shoppingCart = new ArrayList<Movie>();
+        this.sales = new ArrayList<Sale>();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void addToCart(Movie movie) {
@@ -32,5 +38,13 @@ public class User {
 
     public void removeFromCart(Movie movie) {
         this.shoppingCart.remove(movie);
+    }
+
+    public void addSale(Sale sale) {
+        this.sales.add(sale);
+    }
+
+    public List<Sale> getSales() {
+        return this.sales;
     }
 }

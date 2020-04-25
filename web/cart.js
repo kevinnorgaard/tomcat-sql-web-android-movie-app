@@ -4,7 +4,6 @@ function handleCartResult(resultData) {
     console.log(resultData);
 
     let total = 0;
-
     for (let i = 0; i < resultData.length; i++) {
         total += resultData[i]["quantity"] * resultData[i]["price"];
         let rowHTML = "";
@@ -22,7 +21,7 @@ function handleCartResult(resultData) {
     }
 
     let totalElement = jQuery("#total");
-    totalElement.text("Total: $" + total);
+    totalElement.text("Total: $" + Math.round(total * 100) / 100);
 }
 
 function handleUpdateCartResult(resultData) {

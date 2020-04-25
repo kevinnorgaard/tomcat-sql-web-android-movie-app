@@ -1,4 +1,5 @@
 let cartForm = $("#add-to-cart-form");
+let movieId = getParameterByName('id');
 
 function getParameterByName(target) {
     let url = window.location.href;
@@ -65,9 +66,16 @@ function handleResult(resultData) {
 function handleCartResult(resultData) {
     console.log("handling cart response");
     console.log(resultData);
+    let cartBtnElement = $("#cart-btn");
+    for (let i = 0; i < resultData.length; i++) {
+        let movie = resultData[i];
+        if (movie["id"] === movieId) {
+            cartBtnElement.val("Added: " + movie["quantity"]);
+        }
+    }
 }
 
-function submitLoginForm(formSubmitEvent) {
+function submitCartForm(formSubmitEvent) {
     console.log("submitted");
     console.log(cartForm.serialize());
     formSubmitEvent.preventDefault();
@@ -80,8 +88,6 @@ function submitLoginForm(formSubmitEvent) {
     );
 }
 
-let movieId = getParameterByName('id');
-
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",
@@ -90,4 +96,4 @@ jQuery.ajax({
     success: handleResult
 });
 
-cartForm.submit(submitLoginForm);
+cartForm.submit(submitCartForm);

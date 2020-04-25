@@ -17,6 +17,12 @@
 <body>
 <div id=wrapper>
     <h1>Search</h1>
+    <div>
+        <form ACTION="logout" METHOD="POST">
+            <input type="SUBMIT" class="white-btn" value="Log out">
+        </form>
+        <button class="colored-btn"><a href="cart.html">Check out</a></button>
+    </div>
     <form id="search-form" action="api/movies" method="get">
         <label for="title">Title</label><br>
         <input type="text" id="title" name="title"><br><br>
@@ -28,6 +34,7 @@
         <input type="text" id="star" name="star"><br><br>
         <input type="submit" class="colored-btn" value="Search">
     </form>
+    <button class="white-btn"><a href="index.html">Back to main page</a></button>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
