@@ -128,6 +128,7 @@ h {
 
 a {
     color: var(--blue) !important;
+    cursor: pointer;
 }
 
 .star-item {
