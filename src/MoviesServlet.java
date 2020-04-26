@@ -37,10 +37,12 @@ public class MoviesServlet extends HttpServlet {
 
         try {
             Connection connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
 
             Statement select = connection.createStatement();
-            String query = String.format(
-                "SELECT mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id, ',', s.count) SEPARATOR ';') as stars " +
+            Statement countSelect = connection.createStatement();
+            String query1 = String.format(
+                "SELECT SQL_CALC_FOUND_ROWS mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id, ',', s.count) SEPARATOR ';') as stars " +
                 "FROM (" +
                 "    SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
                 "    FROM (" +
@@ -83,7 +85,11 @@ public class MoviesServlet extends HttpServlet {
                     !offset.equals("") ? offset : "0"
             );
 
-            ResultSet result = select.executeQuery(query);
+            String query2 = "SELECT FOUND_ROWS() as rowcount";
+
+            ResultSet result = select.executeQuery(query1);
+            ResultSet countResult = countSelect.executeQuery(query2);
+            connection.commit();
 
             JsonObject jsonObj = new JsonObject();
 
@@ -91,6 +97,11 @@ public class MoviesServlet extends HttpServlet {
             jsonObj.addProperty("limit", limit);
             jsonObj.addProperty("psort", psort);
             jsonObj.addProperty("ssort", ssort);
+
+            if (countResult.next()) {
+                String rowCount = countResult.getString("rowcount");
+                jsonObj.addProperty("rowCount", rowCount);
+            }
 
             JsonArray dataArray = new JsonArray();
             while (result.next()) {
@@ -123,6 +134,8 @@ public class MoviesServlet extends HttpServlet {
 
             result.close();
             select.close();
+//            countResult.close();
+//            countSelect.close();
             connection.close();
         }
         catch (Exception e) {

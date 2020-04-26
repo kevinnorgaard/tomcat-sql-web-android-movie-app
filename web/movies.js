@@ -2,6 +2,9 @@ let limitSelectElement = jQuery("#limit-select");
 let primarySortSelectElement = jQuery("#primary-sort");
 let secondarySortSelectElement = jQuery("#secondary-sort");
 let prevButtonElement = jQuery("#prev-btn");
+let nextButtonElement = jQuery("#next-btn");
+let lastPageElement = jQuery("#last-page");
+let maxOffset = 0;
 
 function getParameterByName(target) {
     // Get request URL
@@ -100,8 +103,12 @@ function sortStars(a, b) {
 }
 
 function handleMoviesResult(resultData) {
-    let moviesTableBodyElement = jQuery("#movies_table_body");
     console.log(resultData);
+    let moviesTableBodyElement = jQuery("#movies_table_body");
+
+    let rowCount = resultData["rowCount"];
+    lastPageElement.text(Math.floor(rowCount / limitSelectElement.val()) + 1);
+    maxOffset = parseInt(rowCount);
 
     let data = resultData["data"];
     for (let i = 0; i < data.length; i++) {
@@ -139,16 +146,32 @@ function onSelectLimit() {
     setParameterByName("limit", limitSelectElement.val());
 }
 
+function onFirstPage() {
+    setParameterByName("offset", 0);
+}
+
+function onLastPage() {
+    let offset = maxOffset - maxOffset % limitSelectElement.val();
+    if (offset !== 0 && offset === maxOffset) {
+        offset += limitSelectElement.val();
+    }
+    setParameterByName("offset", offset);
+}
+
 function onPrevPage() {
     let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
     let limitVal = parseInt(limitSelectElement.val());
-    setParameterByName("offset", currentOffset - limitVal > 0 ? currentOffset - limitVal : 0);
+    if (currentOffset - limitVal > 0) {
+        setParameterByName("offset", currentOffset - limitVal);
+    }
 }
 
 function onNextPage() {
     let currentOffset = getParameterByName("offset") ? parseInt(getParameterByName("offset")) : 0;
     let limitVal = parseInt(limitSelectElement.val());
-    setParameterByName("offset", currentOffset + limitVal);
+    if (currentOffset + limitVal < maxOffset) {
+        setParameterByName("offset",  currentOffset + limitVal);
+    }
 }
 
 function onSelectPrimarySort() {
