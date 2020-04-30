@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -74,13 +75,13 @@ public class CartServlet extends HttpServlet {
             try {
                 Connection connection = dataSource.getConnection();
 
-                Statement select = connection.createStatement();
-                String query = String.format(
-                        "SELECT m.title FROM movies m WHERE m.id = '%s'",
-                        id
-                );
+                String query = "SELECT m.title FROM movies m WHERE m.id = ?";
 
-                ResultSet result = select.executeQuery(query);
+                PreparedStatement select = connection.prepareStatement(query);
+
+                select.setString(1, id);
+
+                ResultSet result = select.executeQuery();
 
                 if (result.next()) {
                     String movie_title = result.getString("title");

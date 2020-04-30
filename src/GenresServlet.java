@@ -25,10 +25,10 @@ public class GenresServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            Statement select = connection.createStatement();
             String query = "SELECT * FROM genres";
+            PreparedStatement select = connection.prepareStatement(query);
 
-            ResultSet result = select.executeQuery(query);
+            ResultSet result = select.executeQuery();
 
             JsonArray jsonArray = new JsonArray();
 

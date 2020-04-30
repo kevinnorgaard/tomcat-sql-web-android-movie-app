@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -26,14 +27,16 @@ public class LoginServlet extends HttpServlet {
         try {
             Connection dbCon = dataSource.getConnection();
 
-            Statement statement = dbCon.createStatement();
-
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
-            String query = String.format("SELECT * from customers where email = '%s' and password = '%s'", email, password);
+            String query = "SELECT * from customers where email = ? and password = ?";
 
-            ResultSet rs = statement.executeQuery(query);
+            PreparedStatement statement = dbCon.prepareStatement(query);
+            statement.setString(1, email);
+            statement.setString(2, password);
+
+            ResultSet rs = statement.executeQuery();
 
             JsonObject responseJsonObject = new JsonObject();
             if (rs.next()) {

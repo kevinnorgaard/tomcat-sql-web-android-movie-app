@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
@@ -73,20 +74,20 @@ public class PaymentServlet extends HttpServlet {
         try {
             Connection connection = dataSource.getConnection();
 
-            Statement select1 = connection.createStatement();
-            String ccQuery = String.format(
-                    "SELECT * FROM creditcards cc " +
-                    "WHERE cc.id = '%s' " +
-                    "AND cc.firstName = '%s' " +
-                    "AND cc.lastName = '%s' " +
-                    "AND cc.expiration = '%s'",
-                    creditCardNumber,
-                    firstName,
-                    lastName,
-                    expirationDate
-            );
+            String ccQuery = "SELECT * FROM creditcards cc " +
+                    "WHERE cc.id = ? " +
+                    "AND cc.firstName = ? " +
+                    "AND cc.lastName = ? " +
+                    "AND cc.expiration = ?";
 
-            ResultSet result1 = select1.executeQuery(ccQuery);
+            PreparedStatement select1 = connection.prepareStatement(ccQuery);
+
+            select1.setString(1, creditCardNumber);
+            select1.setString(2, firstName);
+            select1.setString(3, lastName);
+            select1.setString(4, expirationDate);
+
+            ResultSet result1 = select1.executeQuery();
 
             if (result1.next()) {
                 result1.close();
@@ -96,12 +97,11 @@ public class PaymentServlet extends HttpServlet {
                 for (int i = 0; i < cartItems.size(); i++) {
                     Movie movie = cartItems.get(i);
                     for (int j = 0; j < movie.getQuantity(); j++) {
-                        Statement select2 = connection.createStatement();
-                        String saleQuery = String.format("INSERT INTO sales (id, customerId, movieId, saleDate) VALUES(NULL, '%s', '%s', curdate())",
-                                id,
-                                movie.getId()
-                        );
-                        select2.executeUpdate(saleQuery, Statement.RETURN_GENERATED_KEYS);
+                        String saleQuery = "INSERT INTO sales (id, customerId, movieId, saleDate) VALUES(NULL, ?, ?, curdate())";
+                        PreparedStatement select2 = connection.prepareStatement(saleQuery, Statement.RETURN_GENERATED_KEYS);
+                        select2.setString(1, id);
+                        select2.setString(2, movie.getId());
+                        select2.executeUpdate();
                         ResultSet result2 = select2.getGeneratedKeys();
                         String saleId = "";
                         if (result2.next()) {
