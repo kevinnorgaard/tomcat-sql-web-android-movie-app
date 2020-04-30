@@ -38,6 +38,19 @@ public class PaymentServlet extends HttpServlet {
             throws IOException {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
+        JsonObject jsonObject = new JsonObject();
+
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+
+        // Verify reCAPTCHA
+        try {
+            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+        } catch (Exception e) {
+            jsonObject.addProperty("gRecatchaError", e.getMessage());
+            out.write(jsonObject.toString());
+            out.close();
+            return;
+        }
 
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
@@ -48,7 +61,6 @@ public class PaymentServlet extends HttpServlet {
         String creditCardNumber = request.getParameter("cc-number");
         String expirationDate = request.getParameter("exp-date");
 
-        JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("firstName", firstName);
         jsonObject.addProperty("lastName", lastName);
         jsonObject.addProperty("creditCardNumber", creditCardNumber);
@@ -104,8 +116,6 @@ public class PaymentServlet extends HttpServlet {
 
                 jsonObject.add("sales", salesToJson(user.getSales()));
                 jsonObject.addProperty("processed", true);
-
-//                user.setSale();
             }
             else {
                 result1.close();

@@ -26,21 +26,19 @@ public class StarServlet extends HttpServlet {
         String prevParams = (String) req.getSession().getAttribute("prevParams");
 
         try {
-            // connect to the database
             Connection connection = dataSource.getConnection();
 
-            // create and execute a SQL statement
-            Statement select = connection.createStatement();
-            String query = String.format(
-                "SELECT s.id, s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies " +
+            String query = "SELECT s.id, s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies " +
                 "FROM stars s, stars_in_movies sm, movies m " +
                 "WHERE s.id = sm.starId " +
                 "AND sm.movieId = m.id " +
-                "AND s.id = '%s'",
-                    id
-            );
+                "AND s.id = ? ";
 
-            ResultSet result = select.executeQuery(query);
+            PreparedStatement select = connection.prepareStatement(query);
+
+            select.setString(1, id);
+
+            ResultSet result = select.executeQuery();
 
             JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("prevParams", prevParams);

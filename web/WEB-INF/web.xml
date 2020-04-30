@@ -8,7 +8,6 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- Register the DataSource which defined in META-INF/context.xml-->
     <resource-ref>
         <description>MySQL DataSource</description>
         <res-ref-name>jdbc/moviedb</res-ref-name>

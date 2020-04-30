@@ -35,25 +35,59 @@ public class MoviesServlet extends HttpServlet {
         String psort = req.getParameter("psort") != null ? req.getParameter("psort") : "";
         String ssort = req.getParameter("ssort") != null ? req.getParameter("ssort") : "";
 
+        String qTitle = !title.equals("") ? "%" + title + "%" : "";
+        String qTitleStart = !titleStart.equals("") ? (titleStart.equals("*") ? "^[^a-zA-Z0-9]" : titleStart + "%") : "";
+        String qYear = !year.equals("") ? year : "";
+        String qDirector = !director.equals("") ? "%" + director + "%" : "";
+        String qStar = !star.equals("") ? "%" + star + "%" : "";
+        String qGenre = !genre.equals("") ? "%" + genre + "%" : "";
+        String qPsort = !psort.equals("") ? getSortQuery(psort) : "mg.ratings DESC";
+        String qSsort = !ssort.equals("") ? "," + getSortQuery(ssort) : "";
+        String qLimit = !limit.equals("") ? limit : "10";
+        String qOffset = !offset.equals("") ? offset : "0";
+
+        int qTitleIndex = -1;
+        int qTitleStartIndex = -1;
+        int qYearIndex = -1;
+        int qDirectorIndex = -1;
+        int qStarIndex = -1;
+        int qGenreIndex = -1;
+
+        int index = 1;
+
         try {
             Connection connection = dataSource.getConnection();
             connection.setAutoCommit(false);
 
-            Statement select = connection.createStatement();
-            Statement countSelect = connection.createStatement();
-            String query1 = String.format(
-                "SELECT SQL_CALC_FOUND_ROWS mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id, ',', s.count) SEPARATOR ';') as stars " +
+            String query = "SELECT SQL_CALC_FOUND_ROWS mg.id, mg.title, mg.year, mg.director, mg.ratings, mg.genres, GROUP_CONCAT(CONCAT(s.name, ',', s.id, ',', s.count) SEPARATOR ';') as stars " +
                 "FROM (" +
                 "    SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
                 "    FROM (" +
                 "        SELECT m.id, m.title, m.year, m.director, r.ratings " +
                 "        FROM movies m, ratings r " +
-                "        WHERE r.movieId = m.id " +
-                "        %s " +
-                "        %s " +
-                "        %s " +
-                "        %s " +
-                "        ORDER BY r.ratings " +
+                "        WHERE r.movieId = m.id ";
+            if (!title.equals("")) {
+                query += "AND m.title LIKE ? ";
+                qTitleIndex = index++;
+            }
+            if (!titleStart.equals("")) {
+                if (titleStart.equals("*")) {
+                    query += "AND m.title REGEXP ? ";
+                }
+                else {
+                    query += "AND m.title LIKE ? ";
+                }
+                qTitleStartIndex = index++;
+            }
+            if (!year.equals("")) {
+                 query += "AND m.year = ? ";
+                 qYearIndex = index++;
+            }
+            if (!director.equals("")) {
+                 query += "AND m.director LIKE ? ";
+                 qDirectorIndex = index++;
+            }
+            query += "   ORDER BY r.ratings " +
                 "        DESC " +
                 "    ) mr, genres_in_movies gm, genres g " +
                 "    WHERE mr.id = gm.movieId " + "" +
@@ -66,29 +100,51 @@ public class MoviesServlet extends HttpServlet {
                 "    GROUP BY s.id " +
                 ") s, stars_in_movies sm " +
                 "WHERE mg.id = sm.movieId " +
-                "AND sm.starId = s.id " +
-                "%s " +
-                "%s " +
-                "GROUP BY mg.id, mg.ratings " +
+                "AND sm.starId = s.id ";
+            if (!star.equals("")) {
+                query += "AND s.name LIKE ? ";
+                qStarIndex = index++;
+            }
+            if (!genre.equals("")) {
+                query += "AND genres LIKE ? ";
+                qGenreIndex = index++;
+            }
+            query += String.format("GROUP BY mg.id, mg.ratings " +
                 "ORDER BY %s %s " +
                 "LIMIT %s " +
                 "OFFSET %s ",
-                    !title.equals("") ? "AND m.title LIKE '%" + title + "%'" : "",
-                    !titleStart.equals("") ? (titleStart.equals("*") ? "AND m.title REGEXP '^[^a-zA-Z0-9]'" : "AND m.title LIKE '" + titleStart + "%'") : "",
-                    !year.equals("") ? "AND m.year = " + year : "",
-                    !director.equals("") ? "AND m.director LIKE '%" + director + "%'" : "",
-                    !star.equals("") ? "AND s.name LIKE '%" + star + "%'" : "",
-                    !genre.equals("") ? "AND genres LIKE '%" + genre + "%'" : "",
-                    !psort.equals("") ? getSortQuery(psort) : "mg.ratings DESC",
-                    !ssort.equals("") ? "," + getSortQuery(ssort) : "",
-                    !limit.equals("") ? limit : "10",
-                    !offset.equals("") ? offset : "0"
+                    qPsort,
+                    qSsort,
+                    qLimit,
+                    qOffset
             );
 
-            String query2 = "SELECT FOUND_ROWS() as rowcount";
+            String countQuery = "SELECT FOUND_ROWS() as rowcount";
 
-            ResultSet result = select.executeQuery(query1);
-            ResultSet countResult = countSelect.executeQuery(query2);
+            PreparedStatement select = connection.prepareStatement(query);
+            if (qTitleIndex > 0) {
+                select.setString(qTitleIndex, qTitle);
+            }
+            if (qTitleStartIndex > 0) {
+                select.setString(qTitleStartIndex, qTitleStart);
+            }
+            if (qYearIndex > 0) {
+                select.setInt(qYearIndex, Integer.parseInt(qYear));
+            }
+            if (qDirectorIndex > 0) {
+                select.setString(qDirectorIndex, qDirector);
+            }
+            if (qStarIndex > 0) {
+                select.setString(qStarIndex, qStar);
+            }
+            if (qGenreIndex > 0) {
+                select.setString(qGenreIndex, qGenre);
+            }
+
+            PreparedStatement countSelect = connection.prepareStatement(countQuery);
+
+            ResultSet result = select.executeQuery();
+            ResultSet countResult = countSelect.executeQuery();
             connection.commit();
 
             JsonObject jsonObj = new JsonObject();
