@@ -14,8 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
-@WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "DashboardLoginServlet", urlPatterns = "/api/dashboard-login")
+public class DashboardLoginServlet extends HttpServlet {
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
 
@@ -30,7 +30,7 @@ public class LoginServlet extends HttpServlet {
             String email = request.getParameter("email");
             String password = request.getParameter("password");
 
-            String query = "SELECT * from customers where email = ? ";
+            String query = "SELECT * from employees where email = ? ";
 
             PreparedStatement statement = dbCon.prepareStatement(query);
             statement.setString(1, email);
@@ -41,14 +41,14 @@ public class LoginServlet extends HttpServlet {
 
 
             if (rs.next()) {
-                String id = rs.getString("id");
+                String fullName = rs.getString("fullname");
                 String encryptedPassword = rs.getString("password");
 
                 boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
 
                 if (success) {
                     HttpSession session = request.getSession();
-                    session.setAttribute("user", new User(id, email));
+                    session.setAttribute("user", new Employee(email, fullName));
                     session.setAttribute("loggedIn", true);
                     responseJsonObject.addProperty("status", "success");
                     responseJsonObject.addProperty("message", "Success");

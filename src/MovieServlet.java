@@ -33,9 +33,9 @@ public class MovieServlet extends HttpServlet {
                 "    SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
                 "    FROM (" +
                 "        SELECT m.id, m.title, m.year, m.director, r.ratings " +
-                "        FROM movies m, ratings r " +
-                "        WHERE r.movieId = m.id " +
-                "        AND id = ?" +
+                "        FROM movies m LEFT JOIN ratings r " +
+                "        ON r.movieId = m.id " +
+                "        WHERE id = ?" +
                 "    ) as mr, genres_in_movies gm, genres g " +
                 "    WHERE mr.id = gm.movieId " +
                 "    AND gm.genreId = g.id " +
@@ -73,7 +73,7 @@ public class MovieServlet extends HttpServlet {
                 dataObj.addProperty("movie_title", movie_title);
                 dataObj.addProperty("movie_year", movie_year);
                 dataObj.addProperty("movie_director", movie_director);
-                dataObj.addProperty("movie_ratings", movie_ratings);
+                dataObj.addProperty("movie_ratings", formatRating(movie_ratings));
                 JsonArray genresArray = genresToArray(movie_genres);
                 dataObj.add("movie_genres", genresArray);
                 JsonArray starArray = starsToArray(movie_stars);
@@ -97,6 +97,15 @@ public class MovieServlet extends HttpServlet {
             res.setStatus(500);
         }
         out.close();
+    }
+
+    protected String formatRating(String rating) {
+        if (rating == null) {
+            return "N/A";
+        }
+        else {
+            return rating;
+        }
     }
 
     protected JsonArray genresToArray(String genres) {

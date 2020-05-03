@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          name="viewport">
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Fabflix</title>
+</head>
+
+<body>
+<div id=wrapper>
+    <h1>Dashboard</h1>
+
+    <h3>Insert new star</h3>
+    <form id="insert-new-star-form" action="api/dashboard" method="post">
+        <input type="hidden" name="operation" value="INSERT-NEW-STAR">
+        <label for="insert-star-name">Star Name</label><br>
+        <input type="text" id="insert-star-name" name="star-name" required><br><br>
+        <label for="insert-star-birthyear">Star Birth Year</label><br>
+        <input type="text" id="insert-star-birthyear" name="star-birthyear"><br><br>
+        <input type="submit" class="colored-btn" value="Insert Star">
+    </form>
+    <div id="insert-new-star-success-message"></div>
+
+    <hr />
+
+    <h3>Insert new movie</h3>
+    <form id="insert-new-movie-form" action="#" method="post">
+        <input type="hidden" name="operation" value="INSERT-NEW-MOVIE">
+        <label for="insert-movie-name">Movie Title</label><br>
+        <input type="text" id="insert-movie-name" name="movie-name" required><br><br>
+        <label for="insert-movie-year">Movie Year</label><br>
+        <input type="text" id="insert-movie-year" name="movie-year" required><br><br>
+        <label for="insert-movie-director">Movie Director</label><br>
+        <input type="text" id="insert-movie-director" name="movie-director" required><br><br>
+        <label for="insert-movie-star-name">Star Name</label><br>
+        <input type="text" id="insert-movie-star-name" name="star-name" required><br><br>
+        <label for="insert-movie-genre-name">Genre Name</label><br>
+        <input type="text" id="insert-movie-genre-name" name="genre-name" required><br><br>
+        <input type="submit" class="colored-btn" value="Insert Movie">
+    </form>
+    <div id="insert-new-movie-added-message"></div>
+    <div id="insert-new-movie-star-added-message"></div>
+    <div id="insert-new-movie-genre-added-message"></div>
+
+    <hr />
+
+    <h3>Database Metadata</h3>
+    <table id=db_metadata_table>
+        <thead>
+        <tr>
+            <th>Table</th>
+            <th>Attribute</th>
+        </tr>
+        </thead>
+        <tbody id=db_metadata_table_body></tbody>
+    </table>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="dashboard.js"></script>
+</body>
+</html>

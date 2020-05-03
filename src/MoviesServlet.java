@@ -64,28 +64,53 @@ public class MoviesServlet extends HttpServlet {
                 "    SELECT mr.id, mr.title, mr.year, mr.director, mr.ratings, GROUP_CONCAT(g.name SEPARATOR ';') as genres " +
                 "    FROM (" +
                 "        SELECT m.id, m.title, m.year, m.director, r.ratings " +
-                "        FROM movies m, ratings r " +
-                "        WHERE r.movieId = m.id ";
+                "        FROM movies m LEFT JOIN ratings r " +
+                "        ON r.movieId = m.id ";
+            boolean firstCondition = true;
             if (!title.equals("")) {
-                query += "AND m.title LIKE ? ";
+                query += "WHERE m.title LIKE ? ";
+                firstCondition = false;
                 qTitleIndex = index++;
             }
             if (!titleStart.equals("")) {
                 if (titleStart.equals("*")) {
-                    query += "AND m.title REGEXP ? ";
+                    if (firstCondition) {
+                        query += "WHERE m.title REGEXP ? ";
+                    }
+                    else {
+                        query += "AND m.title REGEXP ? ";
+                    }
                 }
                 else {
-                    query += "AND m.title LIKE ? ";
+                    if (firstCondition) {
+                        query += "WHERE m.title LIKE ? ";
+                    }
+                    else {
+                        query += "AND m.title LIKE ? ";
+                    }
                 }
+                firstCondition = false;
                 qTitleStartIndex = index++;
             }
             if (!year.equals("")) {
-                 query += "AND m.year = ? ";
-                 qYearIndex = index++;
+                if (firstCondition) {
+                    query += "WHERE m.year = ? ";
+                }
+                else {
+                    query += "AND m.year = ? ";
+                }
+                firstCondition = false;
+                qYearIndex = index++;
             }
             if (!director.equals("")) {
-                 query += "AND m.director LIKE ? ";
-                 qDirectorIndex = index++;
+                if (firstCondition) {
+                    query += "WHERE m.director LIKE ? ";
+                }
+                else {
+                    query += "AND m.director LIKE ? ";
+                }
+                firstCondition = false;
+                qDirectorIndex = index++;
             }
             query += "   ORDER BY r.ratings " +
                 "        DESC " +
@@ -153,7 +178,7 @@ public class MoviesServlet extends HttpServlet {
             jsonObj.addProperty("limit", limit);
             jsonObj.addProperty("psort", psort);
             jsonObj.addProperty("ssort", ssort);
-
+            
             if (countResult.next()) {
                 String rowCount = countResult.getString("rowcount");
                 jsonObj.addProperty("rowCount", rowCount);
@@ -174,7 +199,7 @@ public class MoviesServlet extends HttpServlet {
                 dataObj.addProperty("movie_title", movie_title);
                 dataObj.addProperty("movie_year", movie_year);
                 dataObj.addProperty("movie_director", movie_director);
-                dataObj.addProperty("movie_ratings", movie_ratings);
+                dataObj.addProperty("movie_ratings", formatRating(movie_ratings));
                 JsonArray genresArray = genresToArray(movie_genres);
                 dataObj.add("movie_genres", genresArray);
                 JsonArray starsArray = starsToArray(movie_stars);
@@ -190,8 +215,8 @@ public class MoviesServlet extends HttpServlet {
 
             result.close();
             select.close();
-//            countResult.close();
-//            countSelect.close();
+            countResult.close();
+            countSelect.close();
             connection.close();
         }
         catch (Exception e) {
@@ -202,6 +227,15 @@ public class MoviesServlet extends HttpServlet {
             res.setStatus(500);
         }
         out.close();
+    }
+
+    protected String formatRating(String rating) {
+        if (rating == null) {
+            return "N/A";
+        }
+        else {
+            return rating;
+        }
     }
 
     protected JsonArray genresToArray(String genres) {
