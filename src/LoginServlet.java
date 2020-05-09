@@ -23,6 +23,19 @@ public class LoginServlet extends HttpServlet {
             throws IOException {
         PrintWriter out = response.getWriter();
         response.setContentType("application/json");
+        JsonObject jsonObject = new JsonObject();
+
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+
+        // Verify reCAPTCHA
+        try {
+            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+        } catch (Exception e) {
+            jsonObject.addProperty("gRecatchaError", e.getMessage());
+            out.write(jsonObject.toString());
+            out.close();
+            return;
+        }
 
         try {
             Connection dbCon = dataSource.getConnection();
@@ -37,9 +50,6 @@ public class LoginServlet extends HttpServlet {
 
             ResultSet rs = statement.executeQuery();
 
-            JsonObject responseJsonObject = new JsonObject();
-
-
             if (rs.next()) {
                 String id = rs.getString("id");
                 String encryptedPassword = rs.getString("password");
@@ -50,26 +60,25 @@ public class LoginServlet extends HttpServlet {
                     HttpSession session = request.getSession();
                     session.setAttribute("user", new User(id, email));
                     session.setAttribute("loggedIn", true);
-                    responseJsonObject.addProperty("status", "success");
-                    responseJsonObject.addProperty("message", "Success");
+                    jsonObject.addProperty("status", "success");
+                    jsonObject.addProperty("message", "Success");
                 }
                 else {
-                    responseJsonObject.addProperty("status", "fail");
-                    responseJsonObject.addProperty("message", "Incorrect email and/or password");
+                    jsonObject.addProperty("status", "fail");
+                    jsonObject.addProperty("message", "Incorrect email and/or password");
                 }
             }
             else {
-                responseJsonObject.addProperty("status", "fail");
-                responseJsonObject.addProperty("message", "Incorrect email and/or password");
+                jsonObject.addProperty("status", "fail");
+                jsonObject.addProperty("message", "Incorrect email and/or password");
             }
-            out.write(responseJsonObject.toString());
+            out.write(jsonObject.toString());
 
             rs.close();
             statement.close();
             dbCon.close();
         }
         catch (Exception ex) {
-            JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", ex.getMessage());
             out.write(jsonObject.toString());
 

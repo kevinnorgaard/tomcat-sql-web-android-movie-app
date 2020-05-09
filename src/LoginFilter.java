@@ -68,11 +68,6 @@ public class LoginFilter implements Filter {
         allowedURIs.add("_dashboard.js");
         allowedURIs.add("api/dashboard-login");
 
-        allowedURIs.add("dashboard.html");
-        allowedURIs.add("dashboard.js");
-        allowedURIs.add("api/metadata");
-        allowedURIs.add("api/dashboard");
-
         employeeURIs.add("dashboard.html");
         employeeURIs.add("dashboard.js");
         employeeURIs.add("api/metadata");

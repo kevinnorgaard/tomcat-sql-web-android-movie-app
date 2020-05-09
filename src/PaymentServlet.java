@@ -41,18 +41,6 @@ public class PaymentServlet extends HttpServlet {
         response.setContentType("application/json");
         JsonObject jsonObject = new JsonObject();
 
-        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-
-        // Verify reCAPTCHA
-        try {
-            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-        } catch (Exception e) {
-            jsonObject.addProperty("gRecatchaError", e.getMessage());
-            out.write(jsonObject.toString());
-            out.close();
-            return;
-        }
-
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         List<Movie> cartItems = user.getCart();

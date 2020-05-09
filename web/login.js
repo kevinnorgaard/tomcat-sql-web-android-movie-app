@@ -1,11 +1,15 @@
 let loginForm = $("#login-form");
 
 function handleLoginResult(resultData) {
-    if (resultData["status"] === "success") {
-        window.location.replace("index.html");
-    }
-    else {
-        $("#login-error-message").text(resultData["message"]);
+    if (resultData["gRecatchaError"]) {
+        $("#login-error-message").text(resultData["gRecatchaError"]);
+    } else {
+        if (resultData["status"] === "success") {
+            window.location.replace("index.html");
+        }
+        else {
+            $("#login-error-message").text(resultData["message"]);
+        }
     }
 }
 

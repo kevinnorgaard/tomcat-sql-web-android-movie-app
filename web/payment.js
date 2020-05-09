@@ -15,15 +15,11 @@ function handleCartResult(resultData) {
 
 function handlePaymentResult(resultData) {
     console.log(resultData);
-    if (resultData["gRecatchaError"]) {
-        $("#payment-error-message").text(resultData["gRecatchaError"]);
-    } else {
-        if (resultData["processed"]) {
-            window.location.href = "confirmation.html";
-        }
-        else {
-            $("#payment-error-message").text("Payment information is invalid");
-        }
+    if (resultData["processed"]) {
+        window.location.href = "confirmation.html";
+    }
+    else {
+        $("#payment-error-message").text("Payment information is invalid");
     }
 }
 
