@@ -11,11 +11,35 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+class Pair {
+    String first;
+    String second;
+    public Pair() {}
+    public Pair(String first, String second) {
+        this.first = first;
+        this.second = second;
+    }
+    public String getFirst() {
+        return first;
+    }
+    public void setFirst(String first) {
+        this.first = first;
+    }
+    public String getSecond() {
+        return second;
+    }
+    public void setSecond(String second) {
+        this.second = second;
+    }
+    public String toString() {
+        return first + ";" + second;
+    }
+}
 
 public class MyDOMParser {
     Map<String, ParsedMovie> existingMoviesByID;
@@ -25,16 +49,16 @@ public class MyDOMParser {
     Map<String, ParsedStar> existingStarsByName;
     Map<String, ParsedGenre> existingGenresByID;
     Map<String, ParsedGenre> existingGenresByName;
-    Set<Pair<String, String>> existingStarsInMovies;
-    Set<Pair<String, String>> existingGenresInMovies;
+    Set<Pair> existingStarsInMovies;
+    Set<Pair> existingGenresInMovies;
 
     Map<String, ParsedMovie> newMoviesByFID; // key = fid (to connect mains.xml & cast.xml)
     Map<String, ParsedMovie> newMoviesByTDY; // key = title, director, year (to check for duplicates)
     Map<String, ParsedMovie> newMoviesByTD; // key = title, director (to add mains.xml & cast.xml if FID fails)
     Map<String, ParsedStar> newStars;
     Set<String> newGenres;
-    Set<Pair<String, String>> newStarsInMovies;
-    Set<Pair<String, String>> newGenresInMovies;
+    Set<Pair> newStarsInMovies;
+    Set<Pair> newGenresInMovies;
 
     Document dom;
     List<String> errors;
@@ -134,7 +158,7 @@ public class MyDOMParser {
                 ParsedStar s = existingStarsByID.get(starId);
                 ParsedMovie m = existingMoviesByID.get(movieId);
                 if (s != null && m != null) {
-                    Pair<String, String> starInMovie = new Pair<>(s.getName(), m.getTDY());
+                    Pair starInMovie = new Pair(s.getName(), m.getTDY());
                     existingStarsInMovies.add(starInMovie);
                 }
             }
@@ -153,7 +177,7 @@ public class MyDOMParser {
                 ParsedGenre g = existingGenresByID.get(genreId);
                 ParsedMovie m = existingMoviesByID.get(movieId);
                 if (g != null && m != null) {
-                    Pair<String, String> genreInMovie = new Pair<>(g.getName(), m.getTDY());
+                    Pair genreInMovie = new Pair(g.getName(), m.getTDY());
                     existingGenresInMovies.add(genreInMovie);
                 }
             }
@@ -249,9 +273,9 @@ public class MyDOMParser {
             String starsInMoviesQuery = "insert into stars_in_movies (starId, movieId) values (?, ?)";
             PreparedStatement starsInMoviesStatement = connection.prepareStatement(starsInMoviesQuery);
 
-            for (Pair<String, String> sim : newStarsInMovies) {
-                String starName = sim.getKey();
-                String movieTDY = sim.getValue();
+            for (Pair sim : newStarsInMovies) {
+                String starName = sim.getFirst();
+                String movieTDY = sim.getSecond();
                 ParsedStar s = existingStarsByName.get(starName);
                 ParsedMovie m = existingMoviesByTDY.get(movieTDY);
                 if (s != null && m != null) {
@@ -295,9 +319,9 @@ public class MyDOMParser {
             String genresInMoviesQuery = "insert into genres_in_movies (genreId, movieId) values (?, ?)";
             PreparedStatement genresInMoviesStatement = connection.prepareStatement(genresInMoviesQuery);
 
-            for (Pair<String, String> gim : newGenresInMovies) {
-                String genreName = gim.getKey();
-                String movieTDY = gim.getValue();
+            for (Pair gim : newGenresInMovies) {
+                String genreName = gim.getFirst();
+                String movieTDY = gim.getSecond();
                 ParsedGenre g = existingGenresByName.get(genreName);
                 ParsedMovie m = existingMoviesByTDY.get(movieTDY);
                 if (g != null && m != null) {
@@ -432,7 +456,7 @@ public class MyDOMParser {
                     String genreFiltered = genre.substring(0, 1).toUpperCase() + genre.substring(1).toLowerCase();
                     if (existingGenresByName.get(genreFiltered) == null) {
                         newGenres.add(genreFiltered);
-                        Pair<String, String> genreInMovie = new Pair<>(genreFiltered, m.getTDY());
+                        Pair genreInMovie = new Pair(genreFiltered, m.getTDY());
                         if (!existingGenresInMovies.contains(genreInMovie)) {
                             newGenresInMovies.add(genreInMovie);
                         }
@@ -544,7 +568,7 @@ public class MyDOMParser {
                         continue;
                     }
 
-                    Pair<String, String> starInMovie = new Pair<>(starName, m.getTDY());
+                    Pair starInMovie = new Pair(starName, m.getTDY());
                     if (!existingStarsInMovies.contains(starInMovie)) {
                         newStarsInMovies.add(starInMovie);
                     } else {
