@@ -1,19 +1,24 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class ParsedStar {
+    private String id;
     private String name;
-
-    private String dob;
+    private int birthYear;
 
     public ParsedStar() {
+        this.birthYear = -1;
     }
 
-    public ParsedStar(String name, String dob) {
+    public ParsedStar(String id, String name, int birthYear) {
+        this.id = id;
         this.name = name;
-        this.dob = dob;
+        this.birthYear = birthYear;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setName(String name) {
@@ -24,19 +29,19 @@ public class ParsedStar {
         return name;
     }
 
-    public String getDob() {
-        return dob;
+    public int getBirthYear() {
+        return birthYear;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setBirthYear(int birthYear) {
+        this.birthYear = birthYear;
     }
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("Star name: " + getName());
-        sb.append(": ");
-        sb.append("DOB:" + getDob());
+        sb.append("StarName: " + getName());
+        sb.append("; ");
+        sb.append("BirthYear: " + getBirthYear());
 
         return sb.toString();
     }
