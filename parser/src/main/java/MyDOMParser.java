@@ -352,6 +352,7 @@ public class MyDOMParser {
         parseCastsDocument();
 
         printData();
+        System.out.println("\nParsed is done running.");
     }
 
     private void parseXmlFile(String file) {
