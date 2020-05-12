@@ -71,6 +71,7 @@ public class LoginFilter implements Filter {
         employeeURIs.add("dashboard.html");
         employeeURIs.add("dashboard.js");
         employeeURIs.add("api/metadata");
+        employeeURIs.add("api/dashboard");
     }
 
     public void destroy() {

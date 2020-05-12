@@ -102,3 +102,4 @@ CREATE TABLE stars_next_id (
 
 INSERT INTO movies_next_id (id) VALUES (499470);
 INSERT INTO stars_next_id (id) VALUES (9423092);
+INSERT INTO employees (email, password, fullname) VALUES ('classta@email.edu', 'classta', 'TA CS122B');
