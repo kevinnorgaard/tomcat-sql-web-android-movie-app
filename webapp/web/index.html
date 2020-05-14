@@ -6,10 +6,15 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no"
           name="viewport">
 
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.7/jquery.autocomplete.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css" />
 
     <title>Fabflix</title>
 </head>
@@ -18,16 +23,26 @@
 <div id=wrapper>
     <h1>Main Page</h1>
     <a  class="colored-btn" href="login.html">Log in</a><br>
-    <a class="colored-btn" href="search.html">Search</a>
+
+    <h3>Full-text Search</h3>
+    <div class="container">
+        <div class="input-group mb-3">
+            <input type="text" name="movie" id="autocomplete"
+                   class="autocomplete-searchbox form-control"
+                   placeholder="Search movies"/>
+            <div class="input-group-append">
+                <input class="colored-btn search-btn" type="submit" value="Search" />
+            </div>
+        </div>
+    </div>
+
+    <a class="colored-btn" href="search.html">Advanced Search</a>
     <a class="colored-btn" href="browse.html">Browse</a>
     <a class="colored-btn" href="movies.html">All movies</a>
     <br>
     <button class="colored-btn"><a href="cart.html">Check out</a></button>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
+<script src="index.js"></script>
 </body>
 </html>

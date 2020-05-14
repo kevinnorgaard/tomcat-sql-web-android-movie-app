@@ -1,17 +1,17 @@
+DROP DATABASE IF EXISTS moviedb;
 CREATE DATABASE moviedb;
 
 use moviedb;
 
-DROP TABLE IF EXISTS movies;
 CREATE TABLE movies (
     id VARCHAR(10) NOT NULL,
     title VARCHAR(100) NOT NULL,
     year INTEGER NOT NULL,
     director VARCHAR(100) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FULLTEXT (title)
 );
 
-DROP TABLE IF EXISTS stars;
 CREATE TABLE stars (
     id VARCHAR(10) NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -19,7 +19,6 @@ CREATE TABLE stars (
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS stars_in_movies;
 CREATE TABLE stars_in_movies (
     starId VARCHAR(10) NOT NULL,
     movieId VARCHAR(10) NOT NULL,
@@ -27,14 +26,12 @@ CREATE TABLE stars_in_movies (
     FOREIGN KEY (movieId) REFERENCES movies(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
 	id INTEGER NOT NULL AUTO_INCREMENT,
 	name VARCHAR(32) NOT NULL,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS genres_in_movies;
 CREATE TABLE genres_in_movies (
 	genreId INTEGER NOT NULL,
 	movieId VARCHAR(10) NOT NULL,
@@ -42,7 +39,6 @@ CREATE TABLE genres_in_movies (
 	FOREIGN KEY (movieId) REFERENCES movies(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS sales;
 CREATE TABLE sales (
 	id INTEGER NOT NULL AUTO_INCREMENT,
 	customerId INTEGER NOT NULL,
@@ -52,7 +48,6 @@ CREATE TABLE sales (
 	FOREIGN KEY (movieId) REFERENCES movies(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS creditcards;
 CREATE TABLE creditcards (
 	id VARCHAR(20) NOT NULL,
 	firstName VARCHAR(50) NOT NULL,
@@ -61,7 +56,6 @@ CREATE TABLE creditcards (
 	PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS ratings;
 CREATE TABLE ratings (
 	movieId VARCHAR(10) NOT NULL,
 	ratings FLOAT NOT NULL,
@@ -69,7 +63,6 @@ CREATE TABLE ratings (
 	FOREIGN KEY (movieId) REFERENCES movies(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS customers;
 CREATE TABLE customers (
 	id INTEGER NOT NULL AUTO_INCREMENT,
 	firstName VARCHAR(50) NOT NULL,
@@ -82,7 +75,6 @@ CREATE TABLE customers (
 	FOREIGN KEY (ccId) REFERENCES creditcards(id)
 );
 
-DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
 	email VARCHAR(50) NOT NULL,
 	password VARCHAR(20) NOT NULL,
@@ -90,12 +82,10 @@ CREATE TABLE employees (
 	PRIMARY KEY (email)
 );
 
-DROP TABLE IF EXISTS movies_next_id;
 CREATE TABLE movies_next_id (
 	id INTEGER
 );
 
-DROP TABLE IF EXISTS stars_next_id;
 CREATE TABLE stars_next_id (
 	id INTEGER
 );
