@@ -1,4 +1,8 @@
 # Mobile
+.gradle
+gradle/
+gradlew
+gradlew.bat
 mobile/.gradle
 mobile/local.properties
 mobile/.DS_Store
