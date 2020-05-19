@@ -1,7 +1,15 @@
-stanford-movies/
+# Mobile
+mobile/.gradle
+mobile/local.properties
+mobile/.DS_Store
+mobile/app/build
+mobile/captures
+
+# Parser
+parser/stanford-movies/
 
 # Private keys
-src/RecaptchaConstants.java
+webapp/src/RecaptchaConstants.java
 
 .metadata
 bin/
@@ -38,6 +46,7 @@ local.properties
 
 # .idea folder, .iml
 .idea/
+*/.idea/
 *.iml
 
 # Tern plugin
