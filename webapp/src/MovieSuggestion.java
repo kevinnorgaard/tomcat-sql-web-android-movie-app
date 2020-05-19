@@ -17,7 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 // server endpoint URL
-@WebServlet("/movie-suggestion")
+@WebServlet("/api/movie-suggestion")
 public class MovieSuggestion extends HttpServlet {
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
@@ -38,11 +38,17 @@ public class MovieSuggestion extends HttpServlet {
 
             Connection connection = dataSource.getConnection();
 
-            String sqlQuery = "SELECT id, title from movies where MATCH (title) AGAINST (? IN BOOLEAN MODE);";
+            String[] keywords = query.trim().split("\\s+");
+            for (int i = 0; i < keywords.length; i++) {
+                String keyword = keywords[i];
+                keywords[i] = "+" + keyword + "*";
+            }
+
+            String sqlQuery = "SELECT id, title FROM movies WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE);";
 
             PreparedStatement select = connection.prepareStatement(sqlQuery);
 
-            select.setString(1, query);
+            select.setString(1, String.join(" ", keywords));
 
             ResultSet result = select.executeQuery();
 

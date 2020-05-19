@@ -24,6 +24,7 @@ public class MoviesServlet extends HttpServlet {
 
         req.getSession().setAttribute("prevParams", req.getQueryString());
 
+        String fullTextQuery = req.getParameter("query") != null ? req.getParameter("query") : "";
         String title = req.getParameter("title") != null ? req.getParameter("title") : "";
         String year = req.getParameter("year") != null ? req.getParameter("year") : "";
         String director = req.getParameter("director") != null ? req.getParameter("director") : "";
@@ -35,6 +36,15 @@ public class MoviesServlet extends HttpServlet {
         String psort = req.getParameter("psort") != null ? req.getParameter("psort") : "";
         String ssort = req.getParameter("ssort") != null ? req.getParameter("ssort") : "";
 
+        String qFullTextQuery = "";
+        if (!fullTextQuery.equals("")) {
+            String[] keywords = fullTextQuery.trim().split("\\s+");
+            for (int i = 0; i < keywords.length; i++) {
+                String keyword = keywords[i];
+                keywords[i] = "+" + keyword + "*";
+            }
+            qFullTextQuery = String.join(" ", keywords);
+        }
         String qTitle = !title.equals("") ? "%" + title + "%" : "";
         String qTitleStart = !titleStart.equals("") ? (titleStart.equals("*") ? "^[^a-zA-Z0-9]" : titleStart + "%") : "";
         String qYear = !year.equals("") ? year : "";
@@ -46,6 +56,7 @@ public class MoviesServlet extends HttpServlet {
         String qLimit = !limit.equals("") ? limit : "10";
         String qOffset = !offset.equals("") ? offset : "0";
 
+        int qFullTextQueryIndex = -1;
         int qTitleIndex = -1;
         int qTitleStartIndex = -1;
         int qYearIndex = -1;
@@ -67,8 +78,18 @@ public class MoviesServlet extends HttpServlet {
                 "        FROM movies m LEFT JOIN ratings r " +
                 "        ON r.movieId = m.id ";
             boolean firstCondition = true;
+            if (!fullTextQuery.equals("")) {
+                query += "WHERE MATCH (title) AGAINST (? IN BOOLEAN MODE) ";
+                firstCondition = false;
+                qFullTextQueryIndex = index++;
+            }
             if (!title.equals("")) {
-                query += "WHERE m.title LIKE ? ";
+                if (firstCondition) {
+                    query += "WHERE m.title LIKE ? ";
+                }
+                else {
+                    query += "AND m.title LIKE ? ";
+                }
                 firstCondition = false;
                 qTitleIndex = index++;
             }
@@ -147,6 +168,9 @@ public class MoviesServlet extends HttpServlet {
             String countQuery = "SELECT FOUND_ROWS() as rowcount";
 
             PreparedStatement select = connection.prepareStatement(query);
+            if (qFullTextQueryIndex > 0) {
+                select.setString(qFullTextQueryIndex, qFullTextQuery);
+            }
             if (qTitleIndex > 0) {
                 select.setString(qTitleIndex, qTitle);
             }

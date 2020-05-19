@@ -52,6 +52,7 @@ function setParameterByName(target, value) {
 }
 
 function formatUrl() {
+    let query = getParameterByName("query") != null ? getParameterByName("query") : "";
     let title = getParameterByName("title") != null ? getParameterByName("title") : "";
     let year = getParameterByName("year") != null ? getParameterByName("year") : "";
     let director = getParameterByName("director") != null ? getParameterByName("director") : "";
@@ -62,7 +63,7 @@ function formatUrl() {
     let offset = getParameterByName("offset") != null ? getParameterByName("offset") : "";
     let psort = getParameterByName("psort") != null ? getParameterByName("psort") : "";
     let ssort = getParameterByName("ssort") != null ? getParameterByName("ssort") : "";
-    return "api/movies?title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre +
+    return "api/movies?query=" + query + "&title=" + title + "&year=" + year + "&director=" + director + "&star=" + star + "&genre=" + genre +
         "&titlestart=" + titleStart + "&limit=" + limit + "&offset=" + offset + "&psort=" + psort + "&ssort=" + ssort;
 }
 

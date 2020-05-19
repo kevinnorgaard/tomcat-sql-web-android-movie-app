@@ -29,7 +29,11 @@ function handleResult(resultData) {
     console.log(resultData);
 
     let backBtn = jQuery("#back-btn");
-    backBtn.attr("href", "movies.html?" + resultData["prevParams"]);
+    if (resultData["prevParams"] != null) {
+        backBtn.attr("href", "movies.html?" + resultData["prevParams"]);
+    } else {
+        backBtn.attr("href", "movies.html");
+    }
 
     let movieInfoElement = jQuery("#movie_info");
 
