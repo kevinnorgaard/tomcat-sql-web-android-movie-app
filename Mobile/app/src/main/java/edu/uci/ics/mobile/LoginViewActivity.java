@@ -14,11 +14,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends ActionBarActivity {
+public class LoginViewActivity extends ActionBarActivity {
 
     private EditText username;
     private EditText password;
@@ -29,19 +30,15 @@ public class Login extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // upon creation, inflate and initialize the layout
-        setContentView(R.layout.login);
+
+        setContentView(R.layout.loginview);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         message = findViewById(R.id.message);
         loginButton = findViewById(R.id.login);
-        /**
-         * In Android, localhost is the address of the device or the emulator.
-         * To connect to your machine, you need to use the below IP address
-         * **/
+
         url = "https://184.72.155.237:8443/webapp/api/";
 
-        //assign a listener to call a function to handle the user request when clicking a button
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,16 +52,23 @@ public class Login extends ActionBarActivity {
         message.setText("Trying to login");
         // Use the same network queue across our application
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
-        //request type is POST
+
         final StringRequest loginRequest = new StringRequest(Request.Method.POST, url + "login", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //TODO should parse the json response to redirect to appropriate functions.
                 Log.d("login.success", response);
-                //initialize the activity(page)/destination
-                Intent listPage = new Intent(Login.this, ListViewActivity.class);
-                //without starting the activity/page, nothing would happen
-                startActivity(listPage);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("status").equals("success")) {
+                        Intent mainPage = new Intent(LoginViewActivity.this, MainViewActivity.class);
+                        startActivity(mainPage);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Wrong email and/or password", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.d("JSON error", e.toString());
+                }
             }
         },
         new Response.ErrorListener() {
@@ -78,7 +82,7 @@ public class Login extends ActionBarActivity {
             protected Map<String, String> getParams() {
                 // Post request form data
                 final Map<String, String> params = new HashMap<>();
-                params.put("username", username.getText().toString());
+                params.put("email", username.getText().toString());
                 params.put("password", password.getText().toString());
                 return params;
             }
@@ -86,6 +90,5 @@ public class Login extends ActionBarActivity {
 
         // !important: queue.add is where the login request is actually sent
         queue.add(loginRequest);
-
     }
 }

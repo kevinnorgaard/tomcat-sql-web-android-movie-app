@@ -1,6 +1,8 @@
 let loginForm = $("#login-form");
 
 function handleLoginResult(resultData) {
+    console.log(resultData);
+
     if (resultData["gRecatchaError"]) {
         $("#login-error-message").text(resultData["gRecatchaError"]);
     } else {

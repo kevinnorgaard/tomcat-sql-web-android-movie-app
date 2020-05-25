@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:descendantFocusability="blocksDescendants"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/lightgrey"
+              android:padding="10dp">
+
+    <TextView
+            android:id="@+id/title"
+            android:textSize="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"/>
+
+    <TextView
+            android:id="@+id/year"
+            android:textSize="18dp"
+            android:layout_marginTop = "7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"/>
+
+    <TextView
+            android:id="@+id/director"
+            android:textSize="18dp"
+            android:layout_marginTop = "7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"/>
+
+    <TextView
+            android:id="@+id/rating"
+            android:textSize="18dp"
+            android:layout_marginTop = "7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"/>
+
+    <LinearLayout
+            android:layout_marginTop = "10dp"
+            android:orientation="horizontal"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent">
+
+        <LinearLayout
+                android:id="@+id/genreList"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/starList"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

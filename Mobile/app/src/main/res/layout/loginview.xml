@@ -4,7 +4,7 @@
                 android:layout_height = "match_parent" android:paddingLeft= "@dimen/activity_horizontal_margin"
                 android:paddingRight = "@dimen/activity_horizontal_margin"
                 android:paddingTop = "@dimen/activity_vertical_margin"
-                android:paddingBottom = "@dimen/activity_vertical_margin" tools:context = ".Login">
+                android:paddingBottom = "@dimen/activity_vertical_margin" tools:context = ".LoginViewActivity">
 
     <TextView
             android:layout_width = "wrap_content"
@@ -12,7 +12,7 @@
             android:text = "Fabflix"
             android:id = "@+id/title"
             android:layout_centerHorizontal = "true"
-            android:textColor = "@color/red"
+            android:textColor = "@color/blue"
             android:textSize = "35dp" />
 
     <EditText

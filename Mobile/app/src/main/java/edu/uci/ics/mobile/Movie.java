@@ -1,19 +1,70 @@
 package edu.uci.ics.mobile;
 
-public class Movie {
-    private String name;
-    private short year;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Movie(String name, short year) {
+public class Movie {
+    private String id;
+    private String name;
+    private int year;
+    private String director;
+    private double rating;
+    private List<String> genres;
+    private List<Star> stars;
+
+    public Movie(String id, String name, int year, String director, double rating) {
+        this.id = id;
         this.name = name;
         this.year = year;
+        this.director = director;
+        this.rating = rating;
+        this.genres = new ArrayList<>();
+        this.stars = new ArrayList<>();
+    }
+
+    public Movie(String id, String name, int year, String director, double rating, List<String> genres, List<Star> stars) {
+        this.id = id;
+        this.name = name;
+        this.year = year;
+        this.director = director;
+        this.rating = rating;
+        this.genres = genres;
+        this.stars = stars;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public short getYear() {
+    public int getYear() {
         return year;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public List<String> getGenres() {
+        return genres;
+    }
+
+    public void addGenre(String genre) {
+        genres.add(genre);
+    }
+
+    public List<Star> getStars() {
+        return stars;
+    }
+
+    public void addStar(Star star) {
+        stars.add(star);
     }
 }
