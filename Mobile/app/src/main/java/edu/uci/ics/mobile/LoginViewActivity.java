@@ -48,9 +48,8 @@ public class LoginViewActivity extends ActionBarActivity {
     }
 
     public void login() {
-
         message.setText("Trying to login");
-        // Use the same network queue across our application
+
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
 
         final StringRequest loginRequest = new StringRequest(Request.Method.POST, url + "login", new Response.Listener<String>() {
@@ -64,7 +63,7 @@ public class LoginViewActivity extends ActionBarActivity {
                         startActivity(mainPage);
                     }
                     else {
-                        Toast.makeText(getApplicationContext(), "Wrong email and/or password", Toast.LENGTH_SHORT).show();
+                        message.setText("Wrong email and/or password");
                     }
                 } catch (Exception e) {
                     Log.d("JSON error", e.toString());
@@ -74,13 +73,11 @@ public class LoginViewActivity extends ActionBarActivity {
         new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // error
                 Log.d("login.error", error.toString());
             }
         }) {
             @Override
             protected Map<String, String> getParams() {
-                // Post request form data
                 final Map<String, String> params = new HashMap<>();
                 params.put("email", username.getText().toString());
                 params.put("password", password.getText().toString());
@@ -88,7 +85,6 @@ public class LoginViewActivity extends ActionBarActivity {
             }
         };
 
-        // !important: queue.add is where the login request is actually sent
         queue.add(loginRequest);
     }
 }
