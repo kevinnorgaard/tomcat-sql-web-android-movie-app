@@ -78,7 +78,7 @@ public class MovieListViewActivity extends Activity {
                 String movieTitle = movieObj.getString("movie_title");
                 int movieYear = movieObj.getInt("movie_year");
                 String movieDirector = movieObj.getString("movie_director");
-                double movieRatings = movieObj.getDouble("movie_ratings");
+                String movieRatings = movieObj.getString("movie_ratings");
                 JSONArray genresArr = movieObj.getJSONArray("movie_genres");
                 JSONArray starsArr = movieObj.getJSONArray("movie_stars");
 

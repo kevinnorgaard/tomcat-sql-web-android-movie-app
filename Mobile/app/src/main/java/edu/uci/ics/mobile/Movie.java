@@ -8,11 +8,11 @@ public class Movie {
     private String name;
     private int year;
     private String director;
-    private double rating;
+    private String rating;
     private List<String> genres;
     private List<Star> stars;
 
-    public Movie(String id, String name, int year, String director, double rating) {
+    public Movie(String id, String name, int year, String director, String rating) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -22,7 +22,7 @@ public class Movie {
         this.stars = new ArrayList<>();
     }
 
-    public Movie(String id, String name, int year, String director, double rating, List<String> genres, List<Star> stars) {
+    public Movie(String id, String name, int year, String director, String rating, List<String> genres, List<Star> stars) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -48,7 +48,7 @@ public class Movie {
         return director;
     }
 
-    public double getRating() {
+    public String getRating() {
         return rating;
     }
 

@@ -68,7 +68,7 @@ public class SingleMovieViewActivity extends Activity {
             String movieTitle = movieObj.getString("movie_title");
             int movieYear = movieObj.getInt("movie_year");
             String movieDirector = movieObj.getString("movie_director");
-            double movieRatings = movieObj.getDouble("movie_ratings");
+            String movieRatings = movieObj.getString("movie_ratings");
             JSONArray genresArr = movieObj.getJSONArray("movie_genres");
             JSONArray starsArr = movieObj.getJSONArray("movie_stars");
 
@@ -82,7 +82,7 @@ public class SingleMovieViewActivity extends Activity {
             titleView.setText(movieTitle);
             yearView.setText(movieYear + "");
             directorView.setText(movieDirector);
-            ratingView.setText(movieRatings + "");
+            ratingView.setText(movieRatings);
 
             LinearLayout.LayoutParams genrelparams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

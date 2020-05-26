@@ -44,7 +44,7 @@ public class MovieListViewAdapter extends ArrayAdapter<Movie> {
         titleView.setText(movie.getName());
         yearView.setText(movie.getYear() + "");
         directorView.setText(movie.getDirector());
-        ratingView.setText(movie.getRating() + "");
+        ratingView.setText(movie.getRating());
 
         LayoutParams genrelparams = new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
