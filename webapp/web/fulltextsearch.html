@@ -21,17 +21,19 @@
 
 <body>
 <div id=wrapper>
-    <h1>Main Page</h1>
-    <a  class="colored-btn" href="login.html">Log in</a><br>
-
-    <a class="colored-btn" href="fulltextsearch.html">Full-Text Search</a>
-    <a class="colored-btn" href="search.html">Advanced Search</a>
-    <a class="colored-btn" href="browse.html">Browse</a>
-    <a class="colored-btn" href="movies.html">All movies</a>
-    <br>
-    <button class="colored-btn"><a href="cart.html">Check out</a></button>
+    <h1>Full-Text Search</h1>
+    <div class="container">
+        <div class="input-group mb-3">
+            <input type="text" name="movie" id="autocomplete"
+                   class="autocomplete-searchbox form-control"
+                   placeholder="Search movies"/>
+            <div class="input-group-append">
+                <input class="colored-btn search-btn" type="submit" value="Search" onclick="handleNormalSearch()" />
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="index.js"></script>
+<script src="fulltextsearch.js"></script>
 </body>
 </html>
