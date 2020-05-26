@@ -5,7 +5,7 @@ function handleLookup(query, doneCallback) {
 
     let cachedResult = storage.getItem(query);
     if (cachedResult != null) {
-        console.log("Found query results in cache", storage);
+        console.log("Found query results in cache", JSON.parse(cachedResult));
         doneCallback( { suggestions: JSON.parse(cachedResult) } );
         return;
     }
