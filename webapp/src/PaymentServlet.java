@@ -84,13 +84,17 @@ public class PaymentServlet extends HttpServlet {
             if (result1.next()) {
                 result1.close();
                 select1.close();
+                connection.close();
+
+                DataSource ds2 = (DataSource) envContext.lookup("jdbc/moviedb-master");
+                Connection connection2 = ds2.getConnection();
 
                 String id = user.getId();
                 for (int i = 0; i < cartItems.size(); i++) {
                     Movie movie = cartItems.get(i);
                     for (int j = 0; j < movie.getQuantity(); j++) {
                         String saleQuery = "INSERT INTO sales (id, customerId, movieId, saleDate) VALUES(NULL, ?, ?, curdate())";
-                        PreparedStatement select2 = connection.prepareStatement(saleQuery, Statement.RETURN_GENERATED_KEYS);
+                        PreparedStatement select2 = connection2.prepareStatement(saleQuery, Statement.RETURN_GENERATED_KEYS);
                         select2.setString(1, id);
                         select2.setString(2, movie.getId());
                         select2.executeUpdate();
@@ -106,14 +110,16 @@ public class PaymentServlet extends HttpServlet {
                     }
                 }
 
+                connection2.close();
+
                 jsonObject.add("sales", salesToJson(user.getSales()));
                 jsonObject.addProperty("processed", true);
             }
             else {
                 result1.close();
                 select1.close();
+                connection.close();
             }
-            connection.close();
         }
         catch (Exception e) {
             response.setStatus(500);
