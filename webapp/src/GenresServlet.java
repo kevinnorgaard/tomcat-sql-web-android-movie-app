@@ -2,6 +2,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -12,10 +14,6 @@ import java.sql.*;
 
 @WebServlet(name = "GenresServlet", urlPatterns = "/api/genres")
 public class GenresServlet extends HttpServlet {
-    private static final long serialVersionUID = 4L;
-
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws
             ServletException, IOException {
@@ -23,7 +21,10 @@ public class GenresServlet extends HttpServlet {
         res.setContentType("application/json");
 
         try {
-            Connection connection = dataSource.getConnection();
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/moviedb");
+            Connection connection = ds.getConnection();
 
             String query = "SELECT * FROM genres";
             PreparedStatement select = connection.prepareStatement(query);

@@ -2,6 +2,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -12,10 +14,6 @@ import java.sql.*;
 
 @WebServlet(name = "StarServlet", urlPatterns = "/api/star")
 public class StarServlet extends HttpServlet {
-    private static final long serialVersionUID = 3L;
-
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
@@ -26,7 +24,10 @@ public class StarServlet extends HttpServlet {
         String prevParams = (String) req.getSession().getAttribute("prevParams");
 
         try {
-            Connection connection = dataSource.getConnection();
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/moviedb");
+            Connection connection = ds.getConnection();
 
             String query = "SELECT s.id, s.name, s.birthYear, GROUP_CONCAT(CONCAT(m.title, ',', m.id) SEPARATOR ';') as movies " +
                 "FROM stars s, stars_in_movies sm, movies m " +

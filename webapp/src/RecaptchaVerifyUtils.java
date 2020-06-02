@@ -64,7 +64,6 @@ public class RecaptchaVerifyUtils {
         }
 
         throw new Exception("recaptcha verification failed: response is " + jsonObject.toString());
-// 
     }
 
 }

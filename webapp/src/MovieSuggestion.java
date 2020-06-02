@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,24 +21,25 @@ import com.google.gson.JsonObject;
 // server endpoint URL
 @WebServlet("/api/movie-suggestion")
 public class MovieSuggestion extends HttpServlet {
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+
+        JsonArray jsonArray = new JsonArray();
+
+        String query = request.getParameter("query");
+
+        if (query == null || query.trim().isEmpty()) {
+            out.write(jsonArray.toString());
+            return;
+        }
+
         try {
-            PrintWriter out = response.getWriter();
-            response.setContentType("application/json");
-
-            JsonArray jsonArray = new JsonArray();
-
-            String query = request.getParameter("query");
-
-            if (query == null || query.trim().isEmpty()) {
-                out.write(jsonArray.toString());
-                return;
-            }
-
-            Connection connection = dataSource.getConnection();
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/moviedb");
+            Connection connection = ds.getConnection();
 
             String[] keywords = query.trim().split("\\s+");
             for (int i = 0; i < keywords.length; i++) {
@@ -63,10 +66,11 @@ public class MovieSuggestion extends HttpServlet {
             result.close();
             select.close();
             connection.close();
-            out.write(jsonArray.toString());
         } catch (Exception e) {
             response.sendError(500, e.getMessage());
         }
+        out.write(jsonArray.toString());
+        out.close();
     }
 
     private static JsonObject generateJsonObject(String movieId, String movieTitle) {

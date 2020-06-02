@@ -13,8 +13,6 @@ import java.sql.Statement;
 
 @WebServlet(name = "LogoutServlet", urlPatterns = "/logout")
 public class LogoutServlet extends HttpServlet {
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
