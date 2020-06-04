@@ -25,8 +25,9 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("application/json");
         JsonObject jsonObject = new JsonObject();
 
-        jsonObject.addProperty("userAgent", request.getHeader("User-Agent"));
-        if (!request.getHeader("User-Agent").equals("Dalvik/2.1.0 (Linux; U; Android R Build/RPP4.200409.015)")) {
+        String userAgent = request.getHeader("User-Agent");
+        jsonObject.addProperty("userAgent", userAgent);
+        if (!userAgent.equals("Dalvik/2.1.0 (Linux; U; Android R Build/RPP4.200409.015)") && !userAgent.equals("Apache-HttpClient/4.5.12 (Java/1.8.0_241)")) {
             String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
             // Verify reCAPTCHA
