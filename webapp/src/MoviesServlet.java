@@ -8,15 +8,20 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
 public class MoviesServlet extends HttpServlet {
+    long tj = 0;
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws
             ServletException, IOException {
+        long startTime = System.nanoTime();
+
         PrintWriter out = res.getWriter();
         res.setContentType("application/json");
 
@@ -68,6 +73,9 @@ public class MoviesServlet extends HttpServlet {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:/comp/env");
             DataSource ds = (DataSource) envContext.lookup("jdbc/moviedb");
+
+            long queryStartTime = System.nanoTime();
+
             Connection connection = ds.getConnection();
             connection.setAutoCommit(false);
 
@@ -194,7 +202,9 @@ public class MoviesServlet extends HttpServlet {
             PreparedStatement countSelect = connection.prepareStatement(countQuery);
 
             ResultSet result = select.executeQuery();
+
             ResultSet countResult = countSelect.executeQuery();
+
             connection.commit();
 
             JsonObject jsonObj = new JsonObject();
@@ -243,6 +253,8 @@ public class MoviesServlet extends HttpServlet {
             countResult.close();
             countSelect.close();
             connection.close();
+            long queryEndTime = System.nanoTime();
+            tj = queryEndTime - queryStartTime;
         }
         catch (Exception e) {
             JsonObject jsonObject = new JsonObject();
@@ -252,6 +264,23 @@ public class MoviesServlet extends HttpServlet {
             res.setStatus(500);
         }
         out.close();
+
+        long endTime = System.nanoTime();
+
+        long ts = endTime - startTime;
+        System.out.println(ts + "," + tj);
+
+        String contextPath = getServletContext().getRealPath("/");
+        String xmlFilePath = contextPath + "timing.txt";
+        System.out.println(xmlFilePath);
+        try {
+            FileWriter fw = new FileWriter(xmlFilePath, true);
+            fw.write(ts + "," + tj + "\n");
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 
     protected String formatRating(String rating) {

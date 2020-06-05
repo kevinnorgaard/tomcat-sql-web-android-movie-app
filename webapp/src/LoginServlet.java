@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,6 +88,11 @@ public class LoginServlet extends HttpServlet {
         }
         catch (Exception ex) {
             jsonObject.addProperty("errorMessage", ex.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            String sStackTrace = sw.toString();
+            jsonObject.addProperty("stackTrace", sStackTrace);
             out.write(jsonObject.toString());
 
             response.setStatus(500);

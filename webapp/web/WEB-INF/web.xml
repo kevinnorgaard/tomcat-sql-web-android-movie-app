@@ -16,7 +16,7 @@
     </resource-ref>
 
     <resource-ref>
-        <description>MySQL DataSource Slave</description>
+        <description>MySQL DataSource</description>
         <res-ref-name>jdbc/moviedb</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
