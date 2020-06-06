@@ -13,8 +13,13 @@
         5. Build and deploy APK for Android app in `./mobile` directory
 
     - #### Collaborations and Work Distribution:
-       Kevin Norgaard:
-        - ##### 
+       Kevin Norgaard (everything):
+        - Connection Pooling
+        - Master/slave
+        - Load balancing
+        - Log Processing Script
+        - JMeter TS/TJ Time Measurement Report
+        - Log files
 
 - # Connection Pooling
     - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
