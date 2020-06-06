@@ -3,7 +3,7 @@
     
     - #### Names: Kevin Norgaard
     
-    - #### Project 5 Video Demo Link:
+    - #### Project 5 Video Demo Link: https://www.youtube.com/watch?v=8RPnzzqAGtw
 
     - #### Instruction of deployment:
         1. Run `git clone https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-91`
